@@ -1,5 +1,4 @@
 #include "./matching_engine.h"
-#include "../../datamodel/datamodel.h"
 
 MatchingEngine::MatchingEngine() {
     printf("MatchingEngine created.\n");

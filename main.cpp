@@ -1,12 +1,12 @@
 #include <iostream>
 #include <memory>
 #include "datamodel/datamodel.h"
-#include "src/modules/matching_engine.h"
-#include "src/exchange.h"
+#include "src/exchange/modules/matching_engine.h"
+#include "src/exchange/exchange.h"
 
 int main() {
     auto me = std::make_shared<MatchingEngine>();
-    auto exchange = std::make_shared<Exchange>(me);
+    auto exchange = std::make_shared<Exchange>();
 
     datamodel::AddOrderRequest request;
     request.security_id = datamodel::SecurityID::AAPL;
