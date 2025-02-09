@@ -3,13 +3,20 @@
 #include <queue>
 #include "../../../datamodel/datamodel.h"
 
-class MatchingEngine 
+struct IMatchingEngine
+{
+public:
+    virtual datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) = 0;
+    virtual ~IMatchingEngine() {};
+};
+
+class MatchingEngine : public IMatchingEngine
 {
 public:
     MatchingEngine();
     ~MatchingEngine();
 
-    datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request);
+    datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) override;
 
 private:
     enum Status {

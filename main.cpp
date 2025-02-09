@@ -6,7 +6,7 @@
 
 int main() {
     auto me = std::make_shared<MatchingEngine>();
-    auto exchange = std::make_shared<Exchange>();
+    auto exchange = std::make_shared<Exchange>(me);
 
     datamodel::AddOrderRequest request;
     request.security_id = datamodel::SecurityID::AAPL;
@@ -15,7 +15,9 @@ int main() {
     request.qty = 10;
     request.client_id = "Fabrizzio";
 
-    datamodel::AddOrderResponse res = me->add_order(request);
+    datamodel::AddOrderResponse res = exchange
+        ->get_matching_engine()
+        ->add_order(request);
     printf("Order ID: %s\n", res.order_id.c_str());
     printf("Security ID: %d\n", res.security_id);
     return 0;
