@@ -1,23 +1,18 @@
 #include "./matching_engine.h"
 
-MatchingEngine::MatchingEngine() {
-    printf("MatchingEngine created.\n");
-}
-
-MatchingEngine::~MatchingEngine() {
-    printf("MatchingEngine destroyed.\n");
+std::string generate_order_id(const datamodel::AddOrderRequest& request) {
+    auto request_attrs = std::to_string(request.security_id) + std::to_string(request.side) +
+                  std::to_string(request.price) + std::to_string(request.qty) + request.client_id;
+    return std::to_string(std::hash<std::string>{}(request_attrs));
 }
 
 datamodel::AddOrderResponse MatchingEngine::add_order(const datamodel::AddOrderRequest& request) {
     // Create order response
-    datamodel::AddOrderResponse response;
-    response.security_id = request.security_id;
-    response.side = request.side;
-    response.price = request.price;
-    response.qty = request.qty;
-    response.client_id = request.client_id;
-    response.timestamp = std::chrono::system_clock::now();
-    response.order_id = std::to_string(response.timestamp.time_since_epoch().count());
+    datamodel::AddOrderResponse response(request, generate_order_id(request));
+
+    // Add order to the order book
+    Order order(response);
+
 
     return response;
 }

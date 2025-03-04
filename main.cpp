@@ -20,5 +20,6 @@ int main() {
         ->add_order(request);
     printf("Order ID: %s\n", res.order_id.c_str());
     printf("Security ID: %d\n", res.security_id);
+    printf("Timestamp: %ld\n", res.timestamp.time_since_epoch().count());
     return 0;
 }

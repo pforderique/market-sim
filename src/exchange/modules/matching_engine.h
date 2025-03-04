@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <functional>
 #include <queue>
 #include "../../../datamodel/datamodel.h"
 
@@ -13,12 +14,20 @@ public:
 class MatchingEngine : public IMatchingEngine
 {
 public:
-    MatchingEngine();
-    ~MatchingEngine();
+    using OnTransactionCallback = std::function<void(const datamodel::Transaction&)>;
+
+    MatchingEngine(OnTransactionCallback on_transaction = nullptr): on_transaction(on_transaction) {
+        printf("MatchingEngine created.\n");
+    }
+    ~MatchingEngine() {
+        printf("MatchingEngine destroyed.\n");
+    }
 
     datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) override;
 
 private:
+    OnTransactionCallback on_transaction;
+
     enum Status {
         PENDING,
         PARTIALLY_FILLED,
@@ -30,6 +39,9 @@ private:
     struct Order : public datamodel::AddOrderResponse {
         int remaining_qty;
         Status status;
+
+        Order(const datamodel::AddOrderResponse& response)
+            : datamodel::AddOrderResponse(response), remaining_qty(response.qty), status(PENDING) {}
     };
 
     struct CompareAsk {

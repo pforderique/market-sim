@@ -1,11 +1,18 @@
 // File: exchange.h
-// Contains the matching engine and security (asset) data structures.
+// Contains the Exchange Server with the matching engine and security (asset) data structures.
 
 #pragma once
 #include <memory>
 #include "./modules/matching_engine.h"
 
-class Exchange 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <iostream>
+#include <string>
+#include <unistd.h>
+
+class Exchange
 {
 public:
     Exchange(std::shared_ptr<IMatchingEngine> matching_engine) : matching_engine(matching_engine) {
@@ -13,8 +20,8 @@ public:
     }
     ~Exchange();
 
-    // void start();
-    // void stop();
+    void start();
+    void stop();
 
     std::shared_ptr<IMatchingEngine> get_matching_engine() {
         return matching_engine;
