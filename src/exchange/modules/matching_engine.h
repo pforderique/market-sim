@@ -4,13 +4,19 @@
 #include <queue>
 #include "../../../datamodel/datamodel.h"
 
+
+// Interface for the Matching Engine
 struct IMatchingEngine
 {
 public:
+    // Add an order to the matching engine
     virtual datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) = 0;
+    // Match an order with the existing orders in the order book
+    virtual std::vector<datamodel::Transaction> match_order(datamodel::Order& order) = 0;
     virtual ~IMatchingEngine() {};
 };
 
+// Matching Engine implementation
 class MatchingEngine : public IMatchingEngine
 {
 public:
@@ -24,28 +30,12 @@ public:
     }
 
     datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) override;
+    std::vector<datamodel::Transaction> match_order(datamodel::Order& order) override;
 
 private:
-    OnTransactionCallback on_transaction;
-
-    enum Status {
-        PENDING,
-        PARTIALLY_FILLED,
-        FILLED,
-        CANCELLED
-    };
-
-    // Internal order struct
-    struct Order : public datamodel::AddOrderResponse {
-        int remaining_qty;
-        Status status;
-
-        Order(const datamodel::AddOrderResponse& response)
-            : datamodel::AddOrderResponse(response), remaining_qty(response.qty), status(PENDING) {}
-    };
 
     struct CompareAsk {
-        bool operator()(const Order& lhs, const Order& rhs) const {
+        bool operator()(const datamodel::Order& lhs, const datamodel::Order& rhs) const {
             if (lhs.price == rhs.price) {
                 return lhs.timestamp > rhs.timestamp;
             }
@@ -54,7 +44,7 @@ private:
     };
 
     struct CompareBid {
-        bool operator()(const Order& lhs, const Order& rhs) const {
+        bool operator()(const datamodel::Order& lhs, const datamodel::Order& rhs) const {
             if (lhs.price == rhs.price) {
                 return lhs.timestamp > rhs.timestamp;
             }
@@ -62,7 +52,9 @@ private:
         }
     };
 
+    OnTransactionCallback on_transaction;
+
     // Order book
-    std::priority_queue<Order, std::vector<Order>, CompareAsk> ask_orders;
-    std::priority_queue<Order, std::vector<Order>, CompareBid> bid_orders;
+    std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareAsk> ask_orders;
+    std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareBid> bid_orders;
 };
