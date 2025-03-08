@@ -1,7 +1,7 @@
 // File: common.cpp
 #pragma once
 #include <string>
-#include <math.h>
+
 
 namespace datamodel 
 {
