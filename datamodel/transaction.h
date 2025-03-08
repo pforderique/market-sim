@@ -1,6 +1,10 @@
 // File: transaction.cpp
 # pragma once
 #include <chrono>
+#include <iomanip>
+#include <sstream>
+#include <string>
+
 #include "./common.h"
 
 
@@ -28,7 +32,7 @@ struct Transaction {
         seller_id(seller_id),
         timestamp(std::chrono::system_clock::now()) {}
 
-    std::string to_string() const {
+    std::string to_string() const{
         return "{Security ID: " + datamodel::to_string(security_id) +
             ", Price: " + round_two_places(price) +
             ", Qty: " + round_two_places(qty) +
