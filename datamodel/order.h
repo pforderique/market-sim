@@ -1,21 +1,11 @@
 # pragma once
 #include <chrono>
+// #include <cmath>
+#include <iomanip>
+#include <string>
+#include <sstream>
 #include "./common.h"
 #include "./order_requests.h"
-
-
-// datamodel::OrderID generate_order_id(const datamodel::AddOrderRequest& request) {
-//     auto request_attrs =
-//         std::to_string(request.security_id) + 
-//         std::to_string(request.side) +
-//         std::to_string(request.price) +
-//         std::to_string(request.qty) +
-//         request.client_id +
-//         std::to_string(
-//             std::chrono::system_clock::now().time_since_epoch().count()
-//         );
-//     return std::to_string(std::hash<std::string>{}(request_attrs));
-// }
 
 
 namespace datamodel
@@ -27,6 +17,16 @@ enum OrderStatus {
     FILLED,
     CANCELLED,
 };
+
+inline std::string to_string(OrderStatus status) {
+    switch (status) {
+        case PENDING: return "PENDING";
+        case PARTIALLY_FILLED: return "PARTIALLY_FILLED";
+        case FILLED: return "FILLED";
+        case CANCELLED: return "CANCELLED";
+        default: return "UNKNOWN";
+    }
+}
 
 // Order is a struct that represents an order response.
 struct Order : public AddOrderRequest {
@@ -42,8 +42,34 @@ struct Order : public AddOrderRequest {
     // Constructor to create Order from AddOrderRequest
     Order(const AddOrderRequest& request)
         : AddOrderRequest(request), remaining_qty(request.qty), status(PENDING),
-          order_id("some_id"),
+          order_id(generate_order_id(request)),
           timestamp(std::chrono::system_clock::now()) {}
+
+    std::string to_string() const {
+        return "OrderID: " + order_id + 
+               ", SecurityID: " + datamodel::to_string(security_id) +
+               ", Side: " + datamodel::to_string(side) +
+               ", Price: $" + round_two_places(price) +
+               ", Qty: " + round_two_places(qty) +
+               ", RemainingQty: " + round_two_places(remaining_qty) +
+               ", ClientID: " + client_id +
+               ", Status: " + datamodel::to_string(status);
+    }
+
+private:
+    std::string round_two_places(double num) const {
+        std::stringstream stream;
+        stream << std::fixed << std::setprecision(2) << num;
+        return stream.str();
+    }
+    datamodel::OrderID generate_order_id(
+        const datamodel::AddOrderRequest& request
+    ) {
+        auto request_attrs = request.client_id + std::to_string(
+            std::chrono::system_clock::now().time_since_epoch().count()
+        );
+        return std::to_string(std::hash<std::string>{}(request_attrs));
+    }
 };
 
 // TODO: Add ModifyOrderResponse and CancelOrderResponse structs here.
