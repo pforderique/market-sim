@@ -4,18 +4,21 @@
 std::vector<datamodel::Transaction> MatchingEngine::match_order(
     datamodel::Order& order
 ) {
-    // TODO: Current implementation IGNORES security_id. How do we include this
-    // and parallelize this? perhaps an "order book" per security_id and have a
-    // lock per security_id?
+    // Acquire lock for the security's order book.
+    auto securityIdx = static_cast<size_t>(order.security_id);
+    auto &securityBook = this->order_books[securityIdx];
+    std::lock_guard<std::mutex> lock(securityBook.mtx);
+
+    // Transactions to return
     std::vector<datamodel::Transaction> transactions;
 
     if (order.side == datamodel::Side::BID) {
         while (
-            !this->ask_orders.empty() && 
-            order.price >= this->ask_orders.top().price
+            !securityBook.ask_orders.empty() && 
+            order.price >= securityBook.ask_orders.top().price
         ) {
-            datamodel::Order ask_order = this->ask_orders.top();
-            this->ask_orders.pop();
+            datamodel::Order ask_order = securityBook.ask_orders.top();
+            securityBook.ask_orders.pop();
 
             // price favors new order - so the min of the new bid and the ask
             double fulfilled_price = std::min(ask_order.price, order.price);
@@ -45,7 +48,7 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
                 ask_order.status = datamodel::OrderStatus::FILLED;
             } else {
                 ask_order.status = datamodel::OrderStatus::PARTIALLY_FILLED;
-                this->ask_orders.push(ask_order);
+                securityBook.ask_orders.push(ask_order);
             }
 
             // Update bid order status
@@ -59,15 +62,15 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
 
         // After all matching, check if order needs to be added to queue.
         if (order.remaining_qty > 0) {
-            this->bid_orders.push(order);
+            securityBook.bid_orders.push(order);
         }
     } else if (order.side == datamodel::Side::ASK) {
         while (
-            !this->bid_orders.empty() &&
-            order.price <= this->bid_orders.top().price
+            !securityBook.bid_orders.empty() &&
+            order.price <= securityBook.bid_orders.top().price
         ) {
-            datamodel::Order bid_order = this->bid_orders.top();
-            this->bid_orders.pop();
+            datamodel::Order bid_order = securityBook.bid_orders.top();
+            securityBook.bid_orders.pop();
 
             // price favors new order - so the max of the new ask and the bid
             double fulfilled_price = std::max(bid_order.price, order.price);
@@ -98,7 +101,7 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
                 bid_order.status = datamodel::OrderStatus::FILLED;
             } else {
                 bid_order.status = datamodel::OrderStatus::PARTIALLY_FILLED;
-                this->bid_orders.push(bid_order);
+                securityBook.bid_orders.push(bid_order);
             }
 
             // update ask order status
@@ -112,7 +115,7 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
 
         // After all matching, check if order needs to be added to queue.
         if (order.remaining_qty > 0) {
-            this->ask_orders.push(order);
+            securityBook.ask_orders.push(order);
         }
     }
     return transactions;

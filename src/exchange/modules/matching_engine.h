@@ -1,7 +1,9 @@
 #pragma once
 #include <chrono>
 #include <functional>
+#include <mutex>
 #include <queue>
+
 #include "../../../datamodel/datamodel.h"
 
 
@@ -16,19 +18,13 @@ public:
     virtual ~IMatchingEngine() {};
 };
 
-// Matching Engine implementation
+// Matching Engine implementation with thread safety at the security level
 class MatchingEngine : public IMatchingEngine
 {
 public:
     using OnTransactionCallback = std::function<void(const datamodel::Transaction&)>;
 
-    MatchingEngine(OnTransactionCallback on_transaction = nullptr): on_transaction(on_transaction) {
-        if (on_transaction == nullptr) {
-            this->on_transaction = [](const datamodel::Transaction& t) {
-                printf("Transaction: %s\n", t.to_string().c_str());
-            };
-        }
-    }
+    MatchingEngine(OnTransactionCallback on_transaction = nullptr): on_transaction(on_transaction) {}
     ~MatchingEngine() {}
 
     datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) override;
@@ -54,9 +50,14 @@ private:
         }
     };
 
-    OnTransactionCallback on_transaction;
+    struct SecurityBook {
+        std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareAsk> ask_orders;
+        std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareBid> bid_orders;
+        std::mutex mtx;
+    };
 
-    // Order book
-    std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareAsk> ask_orders;
-    std::priority_queue<datamodel::Order, std::vector<datamodel::Order>, CompareBid> bid_orders;
+    std::array<SecurityBook, static_cast<size_t>(
+        datamodel::SecurityID::LAST + 1
+    )> order_books;
+    OnTransactionCallback on_transaction;
 };
