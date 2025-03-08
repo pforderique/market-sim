@@ -10,17 +10,30 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
     std::vector<datamodel::Transaction> transactions;
 
     if (order.side == datamodel::Side::BID) {
-        while (!this->ask_orders.empty() && order.price >= this->ask_orders.top().price) {
+        while (
+            !this->ask_orders.empty() && 
+            order.price >= this->ask_orders.top().price
+        ) {
             datamodel::Order ask_order = this->ask_orders.top();
             this->ask_orders.pop();
 
             // price favors new order - so the min of the new bid and the ask
             double fulfilled_price = std::min(ask_order.price, order.price);
-            double fulfilled_qty = std::min(ask_order.remaining_qty, order.remaining_qty);
+            double fulfilled_qty = std::min(
+                ask_order.remaining_qty, order.remaining_qty
+            );
 
             // Record transaction and broadcast
-            datamodel::Transaction t(order.security_id, fulfilled_price, fulfilled_qty, order.client_id, ask_order.client_id);
-            this->on_transaction(t);
+            datamodel::Transaction t(
+                order.security_id,
+                fulfilled_price,
+                fulfilled_qty,
+                order.client_id,
+                ask_order.client_id
+            );
+            if (this->on_transaction != nullptr) {
+                this->on_transaction(t);
+            }
             transactions.push_back(t);
 
             // update order qtys
@@ -48,9 +61,60 @@ std::vector<datamodel::Transaction> MatchingEngine::match_order(
         if (order.remaining_qty > 0) {
             this->bid_orders.push(order);
         }
-    }
+    } else if (order.side == datamodel::Side::ASK) {
+        while (
+            !this->bid_orders.empty() &&
+            order.price <= this->bid_orders.top().price
+        ) {
+            datamodel::Order bid_order = this->bid_orders.top();
+            this->bid_orders.pop();
 
-    // TODO: Implement the ASK side of the matching engine.
+            // price favors new order - so the max of the new ask and the bid
+            double fulfilled_price = std::max(bid_order.price, order.price);
+            double fulfilled_qty = std::min(
+                bid_order.remaining_qty, order.remaining_qty
+            );
+
+            // Record transaction and broadcast
+            datamodel::Transaction t(
+                order.security_id,
+                fulfilled_price,
+                fulfilled_qty,
+                bid_order.client_id,
+                order.client_id
+            );
+
+            if (this->on_transaction != nullptr) {
+                this->on_transaction(t);
+            }
+            transactions.push_back(t);
+
+            // update order qtys
+            order.remaining_qty -= fulfilled_qty;
+            bid_order.remaining_qty -= fulfilled_qty;
+
+            // update bid_order status
+            if (bid_order.remaining_qty == 0) {
+                bid_order.status = datamodel::OrderStatus::FILLED;
+            } else {
+                bid_order.status = datamodel::OrderStatus::PARTIALLY_FILLED;
+                this->bid_orders.push(bid_order);
+            }
+
+            // update ask order status
+            if (order.remaining_qty == 0) {
+                order.status = datamodel::OrderStatus::FILLED;
+                break;
+            } else {
+                order.status = datamodel::OrderStatus::PARTIALLY_FILLED;
+            }
+        }
+
+        // After all matching, check if order needs to be added to queue.
+        if (order.remaining_qty > 0) {
+            this->ask_orders.push(order);
+        }
+    }
     return transactions;
 }
 

@@ -68,15 +68,27 @@ TEST_F(MatchingEngineTest, MatchOrder_NoMatchPrice) {
     ASSERT_EQ(transactions.size(), 0);
 }
 
-// TEST_F(MatchingEngineTest, MatchOrder_NoMatchSecurity) {
-//     std::vector<datamodel::Transaction> transactions;
-//     transactions = matchingEngine->match_order(*bid_order);
-//     ASSERT_EQ(transactions.size(), 0);
+TEST_F(MatchingEngineTest, MatchOrder_MatchPriceFullQty) {
+    std::vector<datamodel::Transaction> transactions;
 
-//     ask_order->security_id = datamodel::SecurityID::AMZN;
-//     transactions = matchingEngine->match_order(*ask_order);
-//     ASSERT_EQ(transactions.size(), 0);
-// }
+    bid_order->price = 200.0;
+    bid_order->qty = 5;
+    bid_order->remaining_qty = 5;
+    transactions = matchingEngine->match_order(*bid_order);
+    ASSERT_EQ(transactions.size(), 0);
+
+    ask_order->price = 200.0;
+    ask_order->qty = 5;
+    ask_order->remaining_qty = 5;
+    transactions = matchingEngine->match_order(*ask_order);
+    ASSERT_EQ(transactions.size(), 1);
+    auto transaction = transactions[0];
+    ASSERT_EQ(transaction.security_id, ask_order->security_id);
+    ASSERT_EQ(transaction.price, ask_order->price);
+    ASSERT_EQ(transaction.qty, ask_order->qty);
+    ASSERT_EQ(transaction.buyer_id, bid_order->client_id);
+    ASSERT_EQ(transaction.seller_id, ask_order->client_id);
+}
 
 // Main function to run all tests
 int main(int argc, char **argv) {

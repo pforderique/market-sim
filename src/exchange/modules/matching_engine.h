@@ -23,11 +23,13 @@ public:
     using OnTransactionCallback = std::function<void(const datamodel::Transaction&)>;
 
     MatchingEngine(OnTransactionCallback on_transaction = nullptr): on_transaction(on_transaction) {
-        printf("MatchingEngine created.\n");
+        if (on_transaction == nullptr) {
+            this->on_transaction = [](const datamodel::Transaction& t) {
+                printf("Transaction: %s\n", t.to_string().c_str());
+            };
+        }
     }
-    ~MatchingEngine() {
-        printf("MatchingEngine destroyed.\n");
-    }
+    ~MatchingEngine() {}
 
     datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request) override;
     std::vector<datamodel::Transaction> match_order(datamodel::Order& order) override;
