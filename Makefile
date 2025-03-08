@@ -40,14 +40,12 @@ $(TARGET): $(TARGET).cpp $(OBJECTS)
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
 	$(CC) $(CFLAGS) $(GTEST_INCLUDE) $^ $(GTEST_LIBS) -o ./build/$(TEST_TARGET).exe
 
-all: $(TARGET) $(TEST_TARGET)
-tests: $(TEST_TARGET)
-server: $(TARGET)
+all: clean $(TARGET) $(TEST_TARGET)
 
 run:
 	./build/$(TARGET).exe
 
-test: $(TEST_TARGET)
+test:
 	./build/$(TEST_TARGET).exe
 
 clean:
