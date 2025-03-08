@@ -26,6 +26,10 @@ enum SecurityID {
     GOOG,
     AMZN,
     TSLA,
+
+    // Special values for iteration and bounds checking.
+    FIRST = AAPL,
+    LAST = TSLA,
 };
 
 
