@@ -196,9 +196,3 @@ TEST_F(MatchingEngineTest, MatchOrder_MultipleMatches) {
     ASSERT_EQ(transaction2.buyer_id, bid_order->client_id);
     ASSERT_EQ(transaction2.seller_id, ask_order->client_id);
 }
-
-// Main function to run all tests
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

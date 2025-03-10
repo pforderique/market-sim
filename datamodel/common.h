@@ -11,14 +11,6 @@ enum Side {
     ASK
 };
 
-inline std::string to_string(Side side) {
-    switch (side) {
-        case BID: return "BID";
-        case ASK: return "ASK";
-        default: return "UNKNOWN";
-    }
-}
-
 // Enum for security identifiers
 enum SecurityID {
     AAPL,
@@ -32,6 +24,19 @@ enum SecurityID {
     LAST = TSLA,
 };
 
+inline std::string to_string(Side side) {
+    switch (side) {
+        case BID: return "BID";
+        case ASK: return "ASK";
+        default: return "UNKNOWN";
+    }
+}
+
+inline Side side_from_string(const std::string& side) {
+    if (side == "BID") return BID;
+    if (side == "ASK") return ASK;
+    throw std::runtime_error("Invalid Side string: " + side);
+}
 
 inline std::string to_string(SecurityID id) {
     switch (id) {
@@ -42,6 +47,15 @@ inline std::string to_string(SecurityID id) {
         case TSLA: return "TSLA";
         default: return "UNKNOWN";
     }
+}
+
+inline SecurityID security_id_from_string(const std::string& id) {
+    if (id == "AAPL") return AAPL;
+    if (id == "MSFT") return MSFT;
+    if (id == "GOOG") return GOOG;
+    if (id == "AMZN") return AMZN;
+    if (id == "TSLA") return TSLA;
+    throw std::runtime_error("Invalid SecurityID string: " + id);
 }
 
 using OrderID = std::string;
