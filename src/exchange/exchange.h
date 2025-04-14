@@ -15,13 +15,13 @@
 class Exchange
 {
 public:
-    Exchange(std::shared_ptr<IMatchingEngine> matching_engine) : matching_engine(matching_engine) {
-        printf("Exchange created.\n");
-    }
+    Exchange(std::shared_ptr<IMatchingEngine> matching_engine);
     ~Exchange();
 
     void start();
     void stop();
+
+    datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request);
 
     std::shared_ptr<IMatchingEngine> get_matching_engine() {
         return matching_engine;
@@ -30,5 +30,8 @@ public:
 private:
     std::shared_ptr<IMatchingEngine> matching_engine;
 
+    // Private implementation pattern (pimpl) to hide TCP server details
+    struct ExchangeImpl;
+    std::unique_ptr<ExchangeImpl> impl;
     // TODO: Add Security data
 };

@@ -12,6 +12,12 @@ std::string round_two_places(double num) {
     return stream.str();
 };
 
+std::string trim(const std::string& str) {
+    size_t start = str.find_first_not_of(" \n\r\t");
+    size_t end = str.find_last_not_of(" \n\r\t");
+    return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+}
+
 constexpr char DELIM = '|';
 
 namespace datamodel
@@ -41,11 +47,11 @@ std::string AddOrderRequest::to_string() const {
     DELIM << round_two_places(price) << 
     DELIM << round_two_places(qty) << 
     DELIM << client_id;
-    return ss.str();
+    return trim(ss.str());
 }
 
 AddOrderRequest AddOrderRequest::from_string(const std::string& request) {
-    std::stringstream ss(request);
+    std::stringstream ss(trim(request));
     AddOrderRequest req;
     std::string token;
     std::getline(ss, token, DELIM); req.side = side_from_string(token);
@@ -62,11 +68,11 @@ std::string Order::to_string() const {
     DELIM << round_two_places(remaining_qty) << 
     DELIM << datamodel::to_string(status) << 
     DELIM << order_id;
-    return ss.str();
+    return trim(ss.str());
 }
 
 Order Order::from_string(const std::string& order) {
-    std::stringstream ss(order);
+    std::stringstream ss(trim(order));
     Order ord;
     std::string token;
 
