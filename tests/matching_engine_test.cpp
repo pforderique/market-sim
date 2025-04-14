@@ -17,8 +17,8 @@ protected:
 
         bid_request = std::make_shared<datamodel::AddOrderRequest>(
             datamodel::AddOrderRequest{
-            .security_id = datamodel::SecurityID::AAPL,
             .side = datamodel::Side::BID,
+            .security_id = datamodel::SecurityID::AAPL,
             .price = 250.0,
             .qty = 10,
             .client_id = "piero",

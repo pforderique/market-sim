@@ -25,23 +25,23 @@ protected:
 
 TEST_F(DatamodelTest, AddOrderRequest_ToString) {
     datamodel::AddOrderRequest request{
-        .security_id = datamodel::SecurityID::AAPL,
         .side = datamodel::Side::BID,
+        .security_id = datamodel::SecurityID::AAPL,
         .price = 250.0,
         .qty = 10,
         .client_id = "piero",
     };
 
-    std::string expected = "AAPL,BID,250.00,10.00,piero";
+    std::string expected = "BID|AAPL|250.00|10.00|piero";
     ASSERT_EQ(request.to_string(), expected);
 }
 
 TEST_F(DatamodelTest, AddOrderRequest_FromString) {
-    std::string request_str = "AAPL,BID,250.00,10.00,piero";
+    std::string request_str = "BID|AAPL|250.00|10.00|piero";
     datamodel::AddOrderRequest request = datamodel::AddOrderRequest::from_string(request_str);
 
-    ASSERT_EQ(request.security_id, datamodel::SecurityID::AAPL);
     ASSERT_EQ(request.side, datamodel::Side::BID);
+    ASSERT_EQ(request.security_id, datamodel::SecurityID::AAPL);
     ASSERT_EQ(request.price, 250.0);
     ASSERT_EQ(request.qty, 10.0);
     ASSERT_EQ(request.client_id, "piero");
@@ -49,24 +49,24 @@ TEST_F(DatamodelTest, AddOrderRequest_FromString) {
 
 TEST_F(DatamodelTest, Order_ToString) {
     datamodel::AddOrderRequest request{
-        .security_id = datamodel::SecurityID::AAPL,
         .side = datamodel::Side::BID,
+        .security_id = datamodel::SecurityID::AAPL,
         .price = 250.0,
         .qty = 10,
         .client_id = "piero",
     };
     datamodel::Order order(request);
 
-    std::string expected = "AAPL,BID,250.00,10.00,piero,10.00,PENDING";
+    std::string expected = "BID|AAPL|250.00|10.00|piero|10.00|PENDING";
     ASSERT_TRUE(order.to_string().rfind(expected, 0) == 0);
 }
 
 TEST_F(DatamodelTest, Order_FromString) {
-    std::string order_str = "AAPL,BID,250.00,10.00,piero,10.00,PENDING,0";
+    std::string order_str = "BID|AAPL|250.00|10.00|piero|10.00|PENDING|0";
     datamodel::Order order = datamodel::Order::from_string(order_str);
 
-    ASSERT_EQ(order.security_id, datamodel::SecurityID::AAPL);
     ASSERT_EQ(order.side, datamodel::Side::BID);
+    ASSERT_EQ(order.security_id, datamodel::SecurityID::AAPL);
     ASSERT_EQ(order.price, 250.0);
     ASSERT_EQ(order.qty, 10.0);
     ASSERT_EQ(order.client_id, "piero");

@@ -12,6 +12,8 @@ std::string round_two_places(double num) {
     return stream.str();
 };
 
+constexpr char DELIM = '|';
+
 namespace datamodel
 {
 std::string to_string(OrderStatus status) {
@@ -33,13 +35,12 @@ OrderStatus order_status_from_string(const std::string& status) {
 }
 
 std::string AddOrderRequest::to_string() const {
-    char delim = ',';
     std::stringstream ss;
-    ss << datamodel::to_string(security_id) << 
-    delim << datamodel::to_string(side) << 
-    delim << round_two_places(price) << 
-    delim << round_two_places(qty) << 
-    delim << client_id;
+    ss << datamodel::to_string(side) << 
+    DELIM << datamodel::to_string(security_id) << 
+    DELIM << round_two_places(price) << 
+    DELIM << round_two_places(qty) << 
+    DELIM << client_id;
     return ss.str();
 }
 
@@ -47,22 +48,20 @@ AddOrderRequest AddOrderRequest::from_string(const std::string& request) {
     std::stringstream ss(request);
     AddOrderRequest req;
     std::string token;
-    char delim = ',';
-    std::getline(ss, token, delim); req.security_id = security_id_from_string(token);
-    std::getline(ss, token, delim); req.side = side_from_string(token);
-    std::getline(ss, token, delim); req.price = std::stod(token);
-    std::getline(ss, token, delim); req.qty = std::stod(token);
-    std::getline(ss, token, delim); req.client_id = token;
+    std::getline(ss, token, DELIM); req.side = side_from_string(token);
+    std::getline(ss, token, DELIM); req.security_id = security_id_from_string(token);
+    std::getline(ss, token, DELIM); req.price = std::stod(token);
+    std::getline(ss, token, DELIM); req.qty = std::stod(token);
+    std::getline(ss, token, DELIM); req.client_id = token;
     return req;
 }
 
 std::string Order::to_string() const {
-    char delim = ',';
     std::stringstream ss;
     ss << from_request.to_string() << 
-    delim << round_two_places(remaining_qty) << 
-    delim << datamodel::to_string(status) << 
-    delim << order_id;
+    DELIM << round_two_places(remaining_qty) << 
+    DELIM << datamodel::to_string(status) << 
+    DELIM << order_id;
     return ss.str();
 }
 
@@ -70,16 +69,15 @@ Order Order::from_string(const std::string& order) {
     std::stringstream ss(order);
     Order ord;
     std::string token;
-    char delim = ',';
 
-    std::getline(ss, token, delim); ord.security_id = security_id_from_string(token);
-    std::getline(ss, token, delim); ord.side = side_from_string(token);
-    std::getline(ss, token, delim); ord.price = std::stod(token);
-    std::getline(ss, token, delim); ord.qty = std::stod(token);
-    std::getline(ss, token, delim); ord.client_id = token;
-    std::getline(ss, token, delim); ord.remaining_qty = std::stod(token);
-    std::getline(ss, token, delim); ord.status = order_status_from_string(token);
-    std::getline(ss, token, delim); ord.order_id = token;
+    std::getline(ss, token, DELIM); ord.side = side_from_string(token);
+    std::getline(ss, token, DELIM); ord.security_id = security_id_from_string(token);
+    std::getline(ss, token, DELIM); ord.price = std::stod(token);
+    std::getline(ss, token, DELIM); ord.qty = std::stod(token);
+    std::getline(ss, token, DELIM); ord.client_id = token;
+    std::getline(ss, token, DELIM); ord.remaining_qty = std::stod(token);
+    std::getline(ss, token, DELIM); ord.status = order_status_from_string(token);
+    std::getline(ss, token, DELIM); ord.order_id = token;
     return ord;
 }
 

@@ -16,11 +16,13 @@ std::string to_string(OrderStatus status);
 OrderStatus order_status_from_string(const std::string& status);
 
 // AddOrderRequest is a struct that represents an order request.
+// Wire format: side|security_id|price|qty|client_id
+// Example: "BID|AAPL|150.25|100|fabrizzio"
 struct AddOrderRequest {
-    // The security ID of the order request.
-    SecurityID security_id;
     // The side of the order request.
     Side side;
+    // The security ID of the order request.
+    SecurityID security_id;
     // The price of the order request.
     double price;
     // The quantity of the order request.
@@ -32,7 +34,7 @@ struct AddOrderRequest {
     static AddOrderRequest from_string(const std::string& request);
 };
 
-// Order is a struct that represents an order response.
+// Order is a struct that represents an order.
 struct Order : public AddOrderRequest {
     // The remaining quantity of the order
     double remaining_qty;
