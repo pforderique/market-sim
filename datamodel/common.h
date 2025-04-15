@@ -1,4 +1,6 @@
 // File: common.cpp
+// Common data structures and serialization functions
+
 #pragma once
 #include <string>
 
