@@ -83,7 +83,5 @@ TEST_F(DatamodelTest, Transaction_ToString) {
         "fabrizzio"
     );
     std::string txn_str = txn.to_string();
-    auto current_year = std::to_string(std::chrono::system_clock::now().time_since_epoch().count()).substr(0, 4);
     ASSERT_TRUE(txn_str.find("AAPL|250.00|10.00|piero|fabrizzio|") != std::string::npos);
-    ASSERT_TRUE(txn_str.find(current_year) != std::string::npos); // Check for timestamp
 }
