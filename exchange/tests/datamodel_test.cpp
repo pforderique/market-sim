@@ -2,17 +2,19 @@
 
 #include "../datamodel/datamodel.h"
 
-
 // Fixture for testing the MatchingEngine class
-class DatamodelTest : public ::testing::Test {
+class DatamodelTest : public ::testing::Test
+{
 protected:
     // Set up method that runs before each test
-    void SetUp() override {
+    void SetUp() override
+    {
         // Initialize any common test resources
     }
 
     // Tear down method that runs after each test
-    void TearDown() override {
+    void TearDown() override
+    {
         // Clean up any resources if needed
     }
 
@@ -23,7 +25,8 @@ protected:
     std::shared_ptr<datamodel::Order> ask_order;
 };
 
-TEST_F(DatamodelTest, AddOrderRequest_ToString) {
+TEST_F(DatamodelTest, AddOrderRequest_ToString)
+{
     datamodel::AddOrderRequest request{
         .side = datamodel::Side::BID,
         .security_id = datamodel::SecurityID::AAPL,
@@ -36,7 +39,8 @@ TEST_F(DatamodelTest, AddOrderRequest_ToString) {
     ASSERT_EQ(request.to_string(), expected);
 }
 
-TEST_F(DatamodelTest, AddOrderRequest_FromString) {
+TEST_F(DatamodelTest, AddOrderRequest_FromString)
+{
     std::string request_str = "BID|AAPL|250.00|10.00|piero";
     datamodel::AddOrderRequest request = datamodel::AddOrderRequest::from_string(request_str);
 
@@ -47,7 +51,8 @@ TEST_F(DatamodelTest, AddOrderRequest_FromString) {
     ASSERT_EQ(request.client_id, "piero");
 }
 
-TEST_F(DatamodelTest, Order_ToString) {
+TEST_F(DatamodelTest, Order_ToString)
+{
     datamodel::AddOrderRequest request{
         .side = datamodel::Side::BID,
         .security_id = datamodel::SecurityID::AAPL,
@@ -61,7 +66,8 @@ TEST_F(DatamodelTest, Order_ToString) {
     ASSERT_TRUE(order.to_string().rfind(expected, 0) == 0);
 }
 
-TEST_F(DatamodelTest, Order_FromString) {
+TEST_F(DatamodelTest, Order_FromString)
+{
     std::string order_str = "BID|AAPL|250.00|10.00|piero|10.00|PENDING|0";
     datamodel::Order order = datamodel::Order::from_string(order_str);
 
@@ -74,14 +80,14 @@ TEST_F(DatamodelTest, Order_FromString) {
     ASSERT_EQ(order.status, datamodel::OrderStatus::PENDING);
 }
 
-TEST_F(DatamodelTest, Transaction_ToString) {
+TEST_F(DatamodelTest, Transaction_ToString)
+{
     datamodel::Transaction txn(
         datamodel::SecurityID::AAPL,
         250.0,
         10.0,
         "piero",
-        "fabrizzio"
-    );
+        "fabrizzio");
     std::string txn_str = txn.to_string();
     ASSERT_TRUE(txn_str.find("AAPL|250.00|10.00|piero|fabrizzio|") != std::string::npos);
 }

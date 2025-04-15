@@ -1,29 +1,30 @@
 #include <gtest/gtest.h>
 
 #include "../datamodel/datamodel.h"
-#include "../src/exchange/modules/matching_engine.h" 
-
+#include "../src/exchange/modules/matching_engine.h"
 
 // Fixture for testing the MatchingEngine class
-class MatchingEngineTest : public ::testing::Test {
+class MatchingEngineTest : public ::testing::Test
+{
 protected:
     // Set up method that runs before each test
-    void SetUp() override {
+    void SetUp() override
+    {
         // Initialize any common test resources
-        auto on_transaction = [](const datamodel::Transaction& t) {
+        auto on_transaction = [](const datamodel::Transaction &t)
+        {
             printf("Transaction: %s\n", t.to_string().c_str());
         };
         matchingEngine = std::make_unique<MatchingEngine>(on_transaction);
 
         bid_request = std::make_shared<datamodel::AddOrderRequest>(
             datamodel::AddOrderRequest{
-            .side = datamodel::Side::BID,
-            .security_id = datamodel::SecurityID::AAPL,
-            .price = 250.0,
-            .qty = 10,
-            .client_id = "piero",
-            }
-        );
+                .side = datamodel::Side::BID,
+                .security_id = datamodel::SecurityID::AAPL,
+                .price = 250.0,
+                .qty = 10,
+                .client_id = "piero",
+            });
         bid_order = std::make_shared<datamodel::Order>(*bid_request);
 
         ask_request = std::make_shared<datamodel::Order>(*bid_request);
@@ -33,7 +34,8 @@ protected:
     }
 
     // Tear down method that runs after each test
-    void TearDown() override {
+    void TearDown() override
+    {
         // Clean up any resources if needed
         matchingEngine.reset();
     }
@@ -47,7 +49,8 @@ protected:
 };
 
 // Test for add_order method
-TEST_F(MatchingEngineTest, AddOrder_Success) {
+TEST_F(MatchingEngineTest, AddOrder_Success)
+{
     datamodel::AddOrderResponse response =
         matchingEngine->add_order(*bid_request);
 
@@ -59,7 +62,8 @@ TEST_F(MatchingEngineTest, AddOrder_Success) {
 }
 
 // Test match_order method
-TEST_F(MatchingEngineTest, MatchOrder_NoMatchPrice) {
+TEST_F(MatchingEngineTest, MatchOrder_NoMatchPrice)
+{
     std::vector<datamodel::Transaction> transactions;
 
     bid_order->price = 200.0;
@@ -71,7 +75,8 @@ TEST_F(MatchingEngineTest, MatchOrder_NoMatchPrice) {
     ASSERT_EQ(transactions.size(), 0);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_NoMatchSecurity) {
+TEST_F(MatchingEngineTest, MatchOrder_NoMatchSecurity)
+{
     std::vector<datamodel::Transaction> transactions;
 
     bid_order->security_id = datamodel::SecurityID::AMZN;
@@ -83,7 +88,8 @@ TEST_F(MatchingEngineTest, MatchOrder_NoMatchSecurity) {
     ASSERT_EQ(transactions.size(), 0);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_MatchPriceFullQty) {
+TEST_F(MatchingEngineTest, MatchOrder_MatchPriceFullQty)
+{
     std::vector<datamodel::Transaction> transactions;
 
     bid_order->price = 200.0;
@@ -104,7 +110,8 @@ TEST_F(MatchingEngineTest, MatchOrder_MatchPriceFullQty) {
     ASSERT_EQ(transaction.seller_id, ask_order->client_id);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQty) {
+TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQty)
+{
     std::vector<datamodel::Transaction> transactions;
 
     bid_order->price = 200.0;
@@ -125,7 +132,8 @@ TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQty) {
     ASSERT_EQ(transaction.seller_id, ask_order->client_id);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQtyExistingOrder) {
+TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQtyExistingOrder)
+{
     std::vector<datamodel::Transaction> transactions;
 
     bid_order->price = 200.0;
@@ -146,7 +154,8 @@ TEST_F(MatchingEngineTest, MatchOrder_MatchPricePartialQtyExistingOrder) {
     ASSERT_EQ(transaction.seller_id, ask_order->client_id);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_MatchAskOrder) {
+TEST_F(MatchingEngineTest, MatchOrder_MatchAskOrder)
+{
     std::vector<datamodel::Transaction> transactions;
 
     ask_order->price = 200.0;
@@ -167,7 +176,8 @@ TEST_F(MatchingEngineTest, MatchOrder_MatchAskOrder) {
     ASSERT_EQ(transaction.seller_id, ask_order->client_id);
 }
 
-TEST_F(MatchingEngineTest, MatchOrder_MultipleMatches) {
+TEST_F(MatchingEngineTest, MatchOrder_MultipleMatches)
+{
     std::vector<datamodel::Transaction> transactions;
 
     ask_order->price = 200.0;

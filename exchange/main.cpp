@@ -7,9 +7,10 @@
 #include "src/exchange/modules/matching_engine.h"
 #include "src/exchange/exchange.h"
 
-
-int main() {
-    auto on_transaction = [](const datamodel::Transaction& t) {
+int main()
+{
+    auto on_transaction = [](const datamodel::Transaction &t)
+    {
         printf("Transaction: %s\n", t.to_string().c_str());
         broadcast_transaction(t);
     };
@@ -18,10 +19,12 @@ int main() {
 
     exchange->start();
     std::string input;
-    while (true) {
+    while (true)
+    {
         std::cout << "Type 'q' to stop the exchange:\n";
         std::getline(std::cin, input);
-        if (input == "q") {
+        if (input == "q")
+        {
             break;
         }
     }

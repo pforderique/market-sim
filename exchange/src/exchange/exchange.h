@@ -21,9 +21,10 @@ public:
     void start();
     void stop();
 
-    datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest& request);
+    datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest &request);
 
-    std::shared_ptr<IMatchingEngine> get_matching_engine() {
+    std::shared_ptr<IMatchingEngine> get_matching_engine()
+    {
         return matching_engine;
     }
 
