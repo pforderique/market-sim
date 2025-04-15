@@ -32,17 +32,10 @@ struct Transaction {
         seller_id(seller_id),
         timestamp(std::chrono::system_clock::now()) {}
 
-    std::string to_string() const{
-        return "{Security ID: " + datamodel::to_string(security_id) +
-            ", Price: " + round_two_places(price) +
-            ", Qty: " + round_two_places(qty) +
-            ", Buyer ID: " + buyer_id +
-            ", Seller ID: " + seller_id +
-            ", Timestamp: " + std::to_string(
-                timestamp.time_since_epoch().count()
-            ) + 
-            "}";
-    }
+    // Convert the transaction to a string for broadcasting.
+    // Format: "security_id|price|qty|buyer_id|seller_id|timestamp"
+    // Example: `1|100.50|10.00|123|456|2023-10-01T12:34:56Z`
+    std::string to_string() const;
 
 private:
     std::string round_two_places(double num) const {

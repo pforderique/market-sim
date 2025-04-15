@@ -3,6 +3,8 @@
 
 #pragma once
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 
 namespace datamodel 
@@ -63,3 +65,18 @@ inline SecurityID security_id_from_string(const std::string& id) {
 using OrderID = std::string;
 using ClientID = std::string;
 } // namespace datamodel
+
+namespace string_utils
+{
+inline std::string trim(const std::string &str) {
+    size_t start = str.find_first_not_of(" \n\r\t");
+    size_t end = str.find_last_not_of(" \n\r\t");
+    return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+}
+
+inline std::string round_two_places(double num) {
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << num;
+    return stream.str();
+};
+} // namespace string_utils
