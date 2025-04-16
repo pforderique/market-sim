@@ -18,14 +18,17 @@ int main()
     auto exchange = std::make_shared<Exchange>(me);
 
     exchange->start();
-    std::string input;
-    while (true)
-    {
-        std::cout << "Type 'q' to stop the exchange:\n";
-        std::getline(std::cin, input);
-        if (input == "q")
-        {
-            break;
+    if (isatty(STDIN_FILENO)) {
+        std::string input;
+        while (true) {
+            std::cout << "Type 'q' to stop the exchange:\n";
+            std::getline(std::cin, input);
+            if (input == "q") break;
+        }
+    } else {
+        // No interactive terminal — just run indefinitely
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(60));
         }
     }
     exchange->stop();
