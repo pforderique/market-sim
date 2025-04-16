@@ -15,8 +15,6 @@ GTEST_INCLUDE = -I/usr/include/gtest
 # the build target executable:
 TARGET = main
 TEST_TARGET = test_runner
-SERVER_TARGET = exchange
-CLIENT_TARGET = test_client
 
 # Source files
 SOURCES = $(wildcard datamodel/*.cpp) \
@@ -33,8 +31,9 @@ TEST_OBJECTS = $(patsubst %.cpp, ./build/%.o, $(TEST_SOURCES))
 CLIENT_SOURCE = tests/tcp_test_client.cpp
 CLIENT_OBJECT = ./build/$(CLIENT_SOURCE:.cpp=.o)
 
-$(info Src dependency objects: $(OBJECTS))
-$(info Test dependency objects: $(TEST_OBJECTS))
+# Uncomment for debugging
+# $(info Src dependency objects: $(OBJECTS))
+# $(info Test dependency objects: $(TEST_OBJECTS))
 
 # Compile object files
 ./build/%.o: %.cpp
@@ -49,14 +48,9 @@ $(TARGET): $(OBJECTS)
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
 	$(CC) $(CFLAGS) $(GTEST_INCLUDE) $^ $(GTEST_LIBS) -o ./build/$(TEST_TARGET).exe
 
-# # Server executable
-# server: $(OBJECTS)
-# 	$(CC) $(CFLAGS) $(OBJECTS) -o ./build/$(SERVER_TARGET).exe
+server: $(TARGET)
 
-# # Client test executable
-# client: $(OBJECTS)
-# 	@mkdir -p $(dir ./build/$(CLIENT_SOURCE))
-# 	$(CC) $(CFLAGS) $(CLIENT_SOURCE) -o ./build/$(CLIENT_TARGET).exe
+tests: $(TEST_TARGET)
 
 all: clean $(TARGET) $(TEST_TARGET)
 
@@ -65,12 +59,6 @@ run:
 
 test:
 	./build/$(TEST_TARGET).exe
-
-# run_server:
-# 	./build/$(SERVER_TARGET).exe
-
-# run_client:
-# 	./build/$(CLIENT_TARGET).exe
 
 clean:
 	rm -rf ./build/*
