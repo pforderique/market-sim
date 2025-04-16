@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  exchange:
+    build:
+      context: ./exchange
+    network_mode: "host"   # Needed for multicast to work
+
+  marketrecorder:
+    build:
+      context: ./marketrecorder
+    depends_on:
+      - exchange
+    network_mode: "host"   # Also needs to join multicast group on host

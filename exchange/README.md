@@ -27,3 +27,7 @@ echo "ASK|MSFT|390.00|2|piero" | nc localhost 8888
 The exchange server terminal will log (and eventually UDP broadcast) a transaction for 2 shares at $390.00. 
 
 **Note:** the most recent order is favored to encourage market participants to submit their most "aggressive" orders.
+
+
+Running with Docker is still under development.
+Please ignore dockerfiles for now.
