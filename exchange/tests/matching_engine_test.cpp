@@ -11,11 +11,7 @@ protected:
     void SetUp() override
     {
         // Initialize any common test resources
-        auto on_transaction = [](const datamodel::Transaction &t)
-        {
-            printf("Transaction: %s\n", t.to_string().c_str());
-        };
-        matchingEngine = std::make_unique<MatchingEngine>(on_transaction);
+        matchingEngine = std::make_unique<MatchingEngine>();
 
         bid_request = std::make_shared<datamodel::AddOrderRequest>(
             datamodel::AddOrderRequest{
