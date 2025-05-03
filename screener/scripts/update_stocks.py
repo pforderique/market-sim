@@ -1,74 +1,10 @@
 from src import morningstar as ms
+from src import common
 
 
-stocks = [
-    # "SCHD",
-    # "VOO",
-    # "QQQM",
-    "NVDA",
-    "GOOG",
-    "MSFT",
-    "LLY",
-    "UNH",
-    "BLK",
-    "AAPL",
-    "COST",
-    "META",
-    "TSLA",
-    "GOOGL",
-    "COKE",
-    "O",
-    "CMG",
-    "SPGI",
-    "MCK",
-    "V",
-    "VOOG",
-    "TSCO",
-    "CAVA",
-    "EPD",
-    "DELL",
-    "PANW",
-    "UAL",
-    "VTI",
-    "CRWD",
-    "WM",
-    "BA",
-    "JEPI",
-    "HSY",
-    "DAL",
-    "SOXX",
-    "BX",
-    "FSLR",
-    "AMAT",
-    "AMZN",
-    "MCD",
-    "WMT",
-    "AVGO",
-    "KO",
-    "AXP",
-    "ADI",
-    "AMD",
-    "TGT",
-    "HOOD",
-    "DXJ",
-    "UBER",
-    "QQQ",
-    "COR",
-    "ISCG",
-    "IQV",
-    "DIS",
-    "ETHUSD",
-    "MU",
-    "RIVN",
-    "QCOM",
-    "NLY",
-    "ZTS",
-    "CRBP",
-    "IONQ",
-]
-
-ms_api = ms.MoringstarAPI.get_instance()
-for stock in stocks:
-    data = ms_api.get_stock_data(stock)
-    print(f"{stock}".center(10))
-    print(data)
+if __name__ == "__main__":
+    ms_api = ms.MoringstarAPI.get_instance()
+    for stock in common.STOCKS:
+        data = ms_api.get_stock_data(stock)
+        print(f"{stock}".center(10))
+        print(data)

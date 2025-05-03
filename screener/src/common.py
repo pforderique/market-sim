@@ -1,6 +1,7 @@
 import npyscreen
 import enum
 
+
 class Screen(enum.Enum):
     MAIN = "MAIN"
     STOCK_SCREENER = "STOCK_SCREENER"
@@ -15,3 +16,15 @@ def add_close_button(form: npyscreen.FormBaseNew):
         rely=1,
         color="DANGER",
     )
+
+STOCKS = [
+    # "VOO", "QQQM", "VTI", "VOOG", "SPY", "SCHD", "JEPI", "ETHUSD", "SOXX", "DXJ",
+    # "QQQ", "ISCG",
+    "NVDA", "GOOG", "MSFT", "LLY", "UNH", "BLK", "AAPL", "COST", "META",
+    "TSLA", "GOOGL", "COKE", "O", "CMG", "BRK.B", "NFLX",
+    "SPGI", "MCK", "V", "TSCO", "CAVA", "EPD", "DELL", "PANW",
+    "UAL", "CRWD", "WM", "BA","HSY", "DAL", "BX",
+    "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
+    "AMD", "TGT", "HOOD", "UBER", "COR", "IQV",
+    "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ",
+]

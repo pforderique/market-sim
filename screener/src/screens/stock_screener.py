@@ -1,5 +1,5 @@
 import npyscreen
-import src.common as common
+from src import common
 from src import morningstar as ms
 
 
@@ -7,15 +7,6 @@ _NOT_AVAILABLE = "N/A"
 
 
 class StockScreener(npyscreen.FormBaseNew):
-    STOCKS = [
-        "NVDA", "GOOG", "MSFT", "LLY", "UNH", "BLK", "AAPL", "COST", "META",
-        "TSLA", "GOOGL", "COKE", "SCHD", "O", "CMG", "VOO", "QQQM",
-        "SPGI", "MCK", "V", "VOOG", "TSCO", "CAVA", "EPD", "DELL", "PANW",
-        "UAL", "VTI", "CRWD", "WM", "BA", "JEPI", "HSY", "DAL", "SOXX", "BX",
-        "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
-        "AMD", "TGT", "HOOD", "DXJ", "UBER", "QQQ", "COR", "ISCG", "IQV",
-        "DIS", "ETHUSD", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ",
-    ]
     COLUMN_NAMES = [
         "Company",
         "Ticker",
@@ -156,7 +147,7 @@ class StockScreener(npyscreen.FormBaseNew):
 
     def _fetch_screener_data(self) -> list[list[str]]:
         stock_data_rows = []
-        for ticker in StockScreener.STOCKS:
+        for ticker in common.STOCKS:
             data = self.ms_api.get_stock_data(ticker)
             if data is None:
                 print(f"Failed to fetch data for {ticker}")
