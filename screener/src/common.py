@@ -21,7 +21,7 @@ STOCKS = [
     # "VOO", "QQQM", "VTI", "VOOG", "SPY", "SCHD", "JEPI", "ETHUSD", "SOXX", "DXJ",
     # "QQQ", "ISCG",
     "NVDA", "GOOG", "MSFT", "LLY", "UNH", "BLK", "AAPL", "COST", "META",
-    "TSLA", "GOOGL", "COKE", "O", "CMG", "BRK.B", "NFLX",
+    "TSLA", "GOOGL", "COKE", "O", "CMG", "BRK.B", "NFLX", "NOC", "LCID",
     "SPGI", "MCK", "V", "TSCO", "CAVA", "EPD", "DELL", "PANW",
     "UAL", "CRWD", "WM", "BA","HSY", "DAL", "BX",
     "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
