@@ -16,7 +16,7 @@ namespace datamodel
                << string_utils::round_two_places(qty) << delimiter
                << buyer_id << delimiter
                << seller_id << delimiter
-               << std::put_time(&tm_timestamp, "%m%d%y%H%M%S");
+               << std::put_time(&tm_timestamp, "%Y-%m-%dT%H:%M:%S");
         return stream.str();
     }
 } // namespace datamodel

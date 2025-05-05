@@ -1,6 +1,10 @@
 import socket
 import struct
 
+import pydantic
+
+import models
+
 
 MCAST_GRP = '239.255.42.99'  # must match the exchange broadcast address
 PORT = 9999
@@ -31,10 +35,23 @@ class Recorder:
         while self.running:
             try:
                 data, _ = self.sock.recvfrom(4096)
-                print("RECV:", data.decode())
+                self.handle_message(data.decode())
             except Exception as e:
                 print("Error receiving message:", e)
 
-
     def stop(self):
         self.running = False
+
+    def handle_message(self, data: str) -> None:
+        """
+        Handle incoming messages.
+
+        Args:
+            data (str): The incoming message data.
+        """
+        print("RECEIVED:", data)
+        # TODO: LEFT OFF HERE
+        # - Parse the data using the pydantic model
+        models.Transaction.parse_raw(data) # does this work?
+
+        # - ASk GPT what the best way to store object data locally is (db file)?
