@@ -40,7 +40,7 @@ class MoringstarAPI:
         cls._CACHE = cache.Cache.load()
         return cls._INSTANCE
 
-    def get_stock_data(self, ticker) -> dict | None:
+    def get_stock_data(self, ticker, force_update=False) -> dict | None:
         """Fetch stock data for a given ticker symbol.
 
         Args:
@@ -54,7 +54,7 @@ class MoringstarAPI:
         # Get the performance ID for the ticker
         route = "/market/v3/auto-complete"
         ticker_info = MoringstarAPI._CACHE.get(route, ticker)
-        if not ticker_info:
+        if force_update or not ticker_info:
             ticker_info = self.session.get(
                 f"{BASE_URL}{route}", params={"q": ticker}
             ).json()
@@ -70,7 +70,7 @@ class MoringstarAPI:
         performance_id = ticker_info["PerformanceId"]
         route = "/stock/v2/get-price-fair-value"
         fair_value_data = MoringstarAPI._CACHE.get(route, performance_id)
-        if fair_value_data is None:
+        if force_update or fair_value_data is None:
             fair_value_data = self.session.get(
                 f"{BASE_URL}{route}",
                 params={"performanceId": performance_id},
@@ -82,7 +82,7 @@ class MoringstarAPI:
         # Fetch latest price data
         route = "/stock/v2/get-mini-chart-realtime-data"
         price_data = MoringstarAPI._CACHE.get(route, performance_id)
-        if price_data is None:
+        if force_update or price_data is None:
             price_data = self.session.get(
                 f"{BASE_URL}{route}",
                 params={"performanceId": performance_id},
@@ -94,7 +94,7 @@ class MoringstarAPI:
         # Fetch star rating data
         route = "/stock/v2/get-security-info"
         ratings = MoringstarAPI._CACHE.get(route, performance_id)
-        if ratings is None:
+        if force_update or ratings is None:
             ratings = self.session.get(
                 f"{BASE_URL}{route}",
                 params={"performanceId": performance_id},
