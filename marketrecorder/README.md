@@ -15,6 +15,10 @@ python app.py
 
 This listen on port 9999 for multicast packets and serve the flask app.
 
-
-Running with Docker is still under development.
+NOTE: Running with Docker is still under development.
 Please ignore dockerfiles for now.
+
+## Development
+
+After code changes, run `$ pytest` to make sure no breaking changes were added.
+ 

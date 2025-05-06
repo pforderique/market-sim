@@ -2,9 +2,8 @@ from flask import Flask
 import threading
 import signal
 import sys
-import time
 
-import recorder
+from src import recorder
 
 
 # Flask app setup
@@ -15,7 +14,7 @@ def home():
     return "Market Recorder is running!"
 
 # Background thread for recorder
-transaction_recorder = recorder.Recorder()
+transaction_recorder = recorder.MarketRecorder()
 recorder_thread = threading.Thread(
     target=transaction_recorder.listen,
     daemon=True,
