@@ -270,7 +270,7 @@ void Exchange::ExchangeImpl::handle_client(int client_socket)
                 datamodel::AddOrderResponse response = parent->add_order(order_request);
 
                 // Serialize the response and send it back
-                std::string response_data = response.to_string();
+                std::string response_data = response.to_string() + "\n";
                 send(client_socket, response_data.c_str(), response_data.length(), 0);
 
                 // Close the client socket after sending the response.

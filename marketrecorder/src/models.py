@@ -33,7 +33,7 @@ def parse_transaction(data: str) -> Transaction:
         ValueError: If the data is not in the expected format.
         ValidationError: If the data does not match the Transaction model.
     """
-    parts = data.split("|")
+    parts = data.strip().split("|")
     if len(parts) != 6:
         raise ValueError("Invalid transaction format")
 

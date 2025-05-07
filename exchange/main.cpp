@@ -11,7 +11,7 @@ int main()
 {
     auto on_transaction = [](const datamodel::Transaction &t)
     {
-        printf("Transaction: %s\n", t.to_string().c_str());
+        printf("<TRANSACTION: %s>\n", t.to_string().c_str());
         multicast_transaction(t);
     };
     auto me = std::make_shared<MatchingEngine>(on_transaction);

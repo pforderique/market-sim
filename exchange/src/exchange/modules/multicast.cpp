@@ -13,7 +13,6 @@ constexpr int BROADCAST_PORT = 9999;
 
 void multicast_transaction(const datamodel::Transaction &txn)
 {
-    printf("SEND: %s\n", txn.to_string().c_str());
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0)
         return;
@@ -27,7 +26,7 @@ void multicast_transaction(const datamodel::Transaction &txn)
     addr.sin_port = htons(BROADCAST_PORT);
     addr.sin_addr.s_addr = inet_addr(MULTICAST_IP);
 
-    std::string msg = txn.to_string();
+    std::string msg = txn.to_string() + "\n";
     sendto(sock, msg.c_str(), msg.size(), 0, (sockaddr *)&addr, sizeof(addr));
 
     close(sock);
