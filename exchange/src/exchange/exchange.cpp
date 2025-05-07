@@ -270,15 +270,11 @@ void Exchange::ExchangeImpl::handle_client(int client_socket)
                 datamodel::AddOrderResponse response = parent->add_order(order_request);
 
                 // Serialize the response and send it back
-                std::string response_data = response.to_string() + "\n";
+                std::string response_data = response.to_string();
+                log_info("Response: " + response_data);
+                response_data += "\n";
                 send(client_socket, response_data.c_str(), response_data.length(), 0);
 
-                // Close the client socket after sending the response.
-                // Else the client will hang waiting for more data.
-                shutdown(client_socket, SHUT_WR);
-                close(client_socket);
-
-                log_info("Sent response: " + response_data);
                 break;
             }
             catch (const std::exception &e)
@@ -286,9 +282,16 @@ void Exchange::ExchangeImpl::handle_client(int client_socket)
                 // Send error response
                 std::string error_msg = "Error processing request: " + std::string(e.what());
                 log_error(error_msg);
+                error_msg += "\n";
                 send(client_socket, error_msg.c_str(), error_msg.length(), 0);
+                break;
             }
         }
+        // Close the client socket after sending the response.
+        // Else the client will hang waiting for more data.
+        shutdown(client_socket, SHUT_WR);
+        close(client_socket);
+        log_info("Connection closed");
     }
     catch (const std::exception &e)
     {
