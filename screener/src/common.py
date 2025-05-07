@@ -32,7 +32,10 @@ STOCKS = [
     # "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ",
 
     # Pre-Selected
-    "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN",
-    "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH",
-    "PANW",
+    # "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN",
+    # "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH",
+    # "PANW",
+    "ZTS", "MCK", "CAVA", "HOOD", "AMD", "LLY", "NVDA", "TSLA", "MU", "CRWD", 
+    "BX", "AVGO", "AMAT", "ADI", "NLY", "DELL", "AXP", "UNH", "BLK", "SPGI",
+    "VRTX", "V",
 ]
