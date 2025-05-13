@@ -8,7 +8,7 @@ if __name__ == "__main__":
     speeds = []
     for stock in common.STOCKS:
         start_time = time.time()
-        data = ms_api.get_stock_data(stock, force_update=False)
+        data = ms_api.get_stock_data(stock, force_update=True)
         elapsed_time = time.time() - start_time
 
         speeds.append(elapsed_time)

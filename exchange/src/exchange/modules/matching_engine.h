@@ -4,6 +4,7 @@
 #include <mutex>
 #include <queue>
 
+#include "../storage/order_db.h"
 #include "../../../datamodel/datamodel.h"
 
 // Interface for the Matching Engine
@@ -14,6 +15,7 @@ public:
     virtual datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest &request) = 0;
     // Match an order with the existing orders in the order book
     virtual std::vector<datamodel::Transaction> match_order(datamodel::Order &order) = 0;
+    // Destructor
     virtual ~IMatchingEngine() {};
 };
 
@@ -23,8 +25,8 @@ class MatchingEngine : public IMatchingEngine
 public:
     using OnTransactionCallback = std::function<void(const datamodel::Transaction &)>;
 
-    MatchingEngine(OnTransactionCallback on_transaction = nullptr) : on_transaction(on_transaction) {}
-    ~MatchingEngine() {}
+    MatchingEngine(OnTransactionCallback on_transaction = nullptr, bool use_db = true);
+    ~MatchingEngine();
 
     datamodel::AddOrderResponse add_order(const datamodel::AddOrderRequest &request) override;
     std::vector<datamodel::Transaction> match_order(datamodel::Order &order) override;
@@ -61,8 +63,13 @@ private:
         std::mutex mtx;
     };
 
-    std::array<SecurityBook, static_cast<size_t>(
-                                 datamodel::SecurityID::LAST + 1)>
+    std::array<
+        SecurityBook,
+        static_cast<size_t>(datamodel::SecurityID::LAST + 1)>
         order_books;
     OnTransactionCallback on_transaction;
+    std::unique_ptr<storage::OrderDB> order_db;
+
+    void save_unfilled_orders();
+    void load_unfilled_orders();
 };

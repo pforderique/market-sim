@@ -1,5 +1,24 @@
 #include "./matching_engine.h"
 
+const std::string DB_PATH = "data/orders.db";
+
+MatchingEngine::MatchingEngine(OnTransactionCallback on_transaction, bool use_db)
+    : on_transaction(on_transaction) {
+    if (use_db) {
+        this->order_db = std::make_unique<storage::OrderDB>(DB_PATH);
+        if (!this->order_db->init()) {
+            throw std::runtime_error("Failed to initialize order database.");
+        }
+        this->load_unfilled_orders();
+    }
+}
+
+MatchingEngine::~MatchingEngine() {
+    if (this->order_db != nullptr) {
+        this->save_unfilled_orders();
+    }
+}
+
 std::vector<datamodel::Transaction> MatchingEngine::match_order(
     datamodel::Order &order)
 {
@@ -148,4 +167,48 @@ datamodel::AddOrderResponse MatchingEngine::add_order(
     this->match_order(order);
 
     return response;
+}
+
+void MatchingEngine::save_unfilled_orders() {
+    for (size_t i = 0; i <= static_cast<size_t>(datamodel::SecurityID::LAST); ++i) {
+        SecurityBook& book = order_books[i];
+        std::lock_guard<std::mutex> lock(book.mtx);
+
+        // Save all remaining ask orders
+        auto ask_copy = book.ask_orders;
+        while (!ask_copy.empty()) {
+            order_db->insert_order(ask_copy.top());
+            ask_copy.pop();
+        }
+
+        // Save all remaining bid orders
+        auto bid_copy = book.bid_orders;
+        while (!bid_copy.empty()) {
+            order_db->insert_order(bid_copy.top());
+            bid_copy.pop();
+        }
+    }
+}
+
+void MatchingEngine::load_unfilled_orders() {
+    printf("Loading unfilled orders from database...\n");
+
+    // Create DB object with default file path
+    OrderDB db;
+    std::vector<datamodel::Order> orders = db.load_all_orders();
+    std::vector<datamodel::Order> orders;
+
+    for (auto& order : orders) {
+        size_t idx = static_cast<size_t>(order.security_id);
+        auto& book = order_books[idx];
+        std::lock_guard<std::mutex> lock(book.mtx);
+
+        if (order.side == datamodel::Side::BID) {
+            book.bid_orders.push(order);
+        } else {
+            book.ask_orders.push(order);
+        }
+    }
+
+    printf("%zu orders loaded into order book.\n", orders.size());
 }

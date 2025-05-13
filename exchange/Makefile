@@ -7,6 +7,8 @@ CC = g++
 #  -I    include path
 #  -m64  64-bit architecture, needed when running in WSL
 CFLAGS  = -g -Wall -Wextra -std=c++17 -fopenmp -Idatamodel -m64 -pthread
+# -L    library path
+LDFLAGS = -lsqlite3
 
 # Google Test configuration
 GTEST_LIBS = -lgtest -lgtest_main # -pthread <- already included in CFLAGS
@@ -42,7 +44,7 @@ CLIENT_OBJECT = ./build/$(CLIENT_SOURCE:.cpp=.o)
 
 # Main executable
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) $(TARGET).cpp -o ./build/$(TARGET).exe
+	$(CC) $(CFLAGS) $(OBJECTS) $(TARGET).cpp -o ./build/$(TARGET).exe $(LDFLAGS)
 
 # Test executable
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
