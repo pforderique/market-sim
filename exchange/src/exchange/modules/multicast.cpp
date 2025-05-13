@@ -8,7 +8,7 @@
 
 #include "multicast.h"
 
-constexpr const char* MULTICAST_IP = "239.255.42.99";
+constexpr const char *MULTICAST_IP = "239.255.42.99";
 constexpr int BROADCAST_PORT = 9999;
 
 void multicast_transaction(const datamodel::Transaction &txn)

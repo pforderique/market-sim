@@ -54,7 +54,7 @@ namespace
     void log_info(const std::string &message)
     {
         std::cout << get_log_prefix(false) << message << std::endl;
-    }   
+    }
 }
 
 // Constructor/Destructor implementation

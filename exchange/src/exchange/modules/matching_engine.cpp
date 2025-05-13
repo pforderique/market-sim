@@ -3,18 +3,23 @@
 const std::string DB_PATH = "data/orders.db";
 
 MatchingEngine::MatchingEngine(OnTransactionCallback on_transaction, bool use_db)
-    : on_transaction(on_transaction) {
-    if (use_db) {
+    : on_transaction(on_transaction)
+{
+    if (use_db)
+    {
         this->order_db = std::make_unique<storage::OrderDB>(DB_PATH);
-        if (!this->order_db->init()) {
+        if (!this->order_db->init())
+        {
             throw std::runtime_error("Failed to initialize order database.");
         }
         this->load_unfilled_orders();
     }
 }
 
-MatchingEngine::~MatchingEngine() {
-    if (this->order_db != nullptr) {
+MatchingEngine::~MatchingEngine()
+{
+    if (this->order_db != nullptr)
+    {
         this->save_unfilled_orders();
     }
 }
@@ -169,20 +174,24 @@ datamodel::AddOrderResponse MatchingEngine::add_order(
     return response;
 }
 
-void MatchingEngine::save_unfilled_orders() {
+void MatchingEngine::save_unfilled_orders()
+{
     std::vector<datamodel::Order> orders_to_save;
-    for (size_t i = 0; i <= static_cast<size_t>(datamodel::SecurityID::LAST); ++i) {
-        SecurityBook& book = order_books[i];
+    for (size_t i = 0; i <= static_cast<size_t>(datamodel::SecurityID::LAST); ++i)
+    {
+        SecurityBook &book = order_books[i];
         std::lock_guard<std::mutex> lock(book.mtx);
 
         // Save all remaining ask orders
-        while (!book.ask_orders.empty()) {
+        while (!book.ask_orders.empty())
+        {
             datamodel::Order order = book.ask_orders.top();
             book.ask_orders.pop();
             orders_to_save.push_back(order);
         }
         // Save all remaining bid orders
-        while (!book.bid_orders.empty()) {
+        while (!book.bid_orders.empty())
+        {
             datamodel::Order order = book.bid_orders.top();
             book.bid_orders.pop();
             orders_to_save.push_back(order);
@@ -192,19 +201,24 @@ void MatchingEngine::save_unfilled_orders() {
     this->order_db->save_orders(orders_to_save);
 }
 
-void MatchingEngine::load_unfilled_orders() {
+void MatchingEngine::load_unfilled_orders()
+{
     printf("Loading unfilled orders from database...\n");
 
     std::vector<datamodel::Order> orders = this->order_db->load_orders();
 
-    for (auto& order : orders) {
+    for (auto &order : orders)
+    {
         size_t idx = static_cast<size_t>(order.security_id);
-        auto& book = order_books[idx];
+        auto &book = order_books[idx];
         std::lock_guard<std::mutex> lock(book.mtx);
 
-        if (order.side == datamodel::Side::BID) {
+        if (order.side == datamodel::Side::BID)
+        {
             book.bid_orders.push(order);
-        } else {
+        }
+        else
+        {
             book.ask_orders.push(order);
         }
     }
