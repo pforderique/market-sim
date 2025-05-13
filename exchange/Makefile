@@ -48,7 +48,7 @@ $(TARGET): $(OBJECTS)
 
 # Test executable
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(GTEST_INCLUDE) $^ $(GTEST_LIBS) -o ./build/$(TEST_TARGET).exe
+	$(CC) $(CFLAGS) $(GTEST_INCLUDE) $^ $(GTEST_LIBS) -o ./build/$(TEST_TARGET).exe $(LDFLAGS)
 
 server: $(TARGET)
 

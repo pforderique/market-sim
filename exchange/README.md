@@ -4,14 +4,14 @@ Open source implementation of a market exchange.
 
 ## Run the Exchange Server
 
-Build all the binaries
+Install dependencies
 ```bash
-make all
+bash setup.sh
 ```
 
-Run the server
+Build and run the server
 ```bash
-make run
+make server && make run
 ```
 
 In another terminal, send a bid request
@@ -32,3 +32,15 @@ The exchange server terminal will log and UDP multicast a transaction for 2 shar
 
 Running with Docker is still under development.
 Please ignore dockerfiles for now.
+
+## Development
+
+After making changes, build all main and test targets
+```bash
+make all
+```
+
+and run the tests
+```bash
+make test
+```

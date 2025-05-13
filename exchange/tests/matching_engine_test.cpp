@@ -11,7 +11,7 @@ protected:
     void SetUp() override
     {
         // Initialize any common test resources
-        matchingEngine = std::make_unique<MatchingEngine>();
+        matchingEngine = std::make_unique<MatchingEngine>(nullptr, false);
 
         bid_request = std::make_shared<datamodel::AddOrderRequest>(
             datamodel::AddOrderRequest{

@@ -170,33 +170,32 @@ datamodel::AddOrderResponse MatchingEngine::add_order(
 }
 
 void MatchingEngine::save_unfilled_orders() {
+    std::vector<datamodel::Order> orders_to_save;
     for (size_t i = 0; i <= static_cast<size_t>(datamodel::SecurityID::LAST); ++i) {
         SecurityBook& book = order_books[i];
         std::lock_guard<std::mutex> lock(book.mtx);
 
         // Save all remaining ask orders
-        auto ask_copy = book.ask_orders;
-        while (!ask_copy.empty()) {
-            order_db->insert_order(ask_copy.top());
-            ask_copy.pop();
+        while (!book.ask_orders.empty()) {
+            datamodel::Order order = book.ask_orders.top();
+            book.ask_orders.pop();
+            orders_to_save.push_back(order);
         }
-
         // Save all remaining bid orders
-        auto bid_copy = book.bid_orders;
-        while (!bid_copy.empty()) {
-            order_db->insert_order(bid_copy.top());
-            bid_copy.pop();
+        while (!book.bid_orders.empty()) {
+            datamodel::Order order = book.bid_orders.top();
+            book.bid_orders.pop();
+            orders_to_save.push_back(order);
         }
     }
+    printf("Saving %zu unfilled orders to database...\n", orders_to_save.size());
+    this->order_db->save_orders(orders_to_save);
 }
 
 void MatchingEngine::load_unfilled_orders() {
     printf("Loading unfilled orders from database...\n");
 
-    // Create DB object with default file path
-    OrderDB db;
-    std::vector<datamodel::Order> orders = db.load_all_orders();
-    std::vector<datamodel::Order> orders;
+    std::vector<datamodel::Order> orders = this->order_db->load_orders();
 
     for (auto& order : orders) {
         size_t idx = static_cast<size_t>(order.security_id);
