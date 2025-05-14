@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class MarketRecorder:
     def __init__(self):
         self.running = False
-        self.transaction_db = db.Database()
+        self.transaction_db = db.TransactionDB()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 

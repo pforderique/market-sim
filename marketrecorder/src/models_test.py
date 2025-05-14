@@ -17,6 +17,7 @@ class TestTransaction:
         got = models.parse_transaction(self._valid_transaction_data)
 
         expected = models.Transaction(
+            id=got.id,
             security_id="MSFT",
             price=390.05,
             quantity=2.00,
