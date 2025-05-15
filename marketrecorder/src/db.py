@@ -32,7 +32,7 @@ class TransactionDB:
             self.engine = get_real_engine()
         else:
             self.engine = engine
-        
+
         sqlmodel.SQLModel.metadata.create_all(self.engine)
 
     def insert_transaction(self, transaction: models.Transaction):
@@ -40,13 +40,13 @@ class TransactionDB:
         with sqlmodel.Session(self.engine) as session:
             session.add(transaction)
             session.commit()
-    
+
     def insert_transactions(self, transactions: list[models.Transaction]):
         """Insert multiple transactions into the DB."""
         with sqlmodel.Session(self.engine) as session:
             session.add_all(transactions)
             session.commit()
-    
+
     def most_recent_transaction(self, security_id: str) -> models.Transaction | None:
         """Get the most recent transaction for a security.
 
@@ -65,7 +65,7 @@ class TransactionDB:
             )
             result = session.exec(query).first()
             return result
-    
+
     def historical_prices(self, security_id: str, step: str) -> list[dict[str, Any]]:
         """Get historical price data for a security aggregated by time step.
 
@@ -82,7 +82,8 @@ class TransactionDB:
         """
         valid_steps = {'min', 'hr', 'day', 'month'}
         if step not in valid_steps:
-            raise ValueError(f"Step must be one of {valid_steps}, got {step!r}")
+            raise ValueError(
+                f"Step must be one of {valid_steps}, got {step!r}")
 
         # Map step to SQLite strftime format string
         format_map = {
@@ -92,7 +93,7 @@ class TransactionDB:
             'month': '%Y-%m'
         }
         format_str = format_map[step]
-        
+
         with sqlmodel.Session(self.engine) as session:
             query = text("""
                 SELECT 
@@ -107,12 +108,12 @@ class TransactionDB:
                 GROUP BY period
                 ORDER BY period
             """)
-            
+
             result = session.exec(query.bindparams(
                 format=format_str,
                 security_id=security_id
             ))
-            
+
             # Convert result to list of dicts
             return [
                 {
@@ -125,10 +126,10 @@ class TransactionDB:
                 }
                 for row in result
             ]
-    
+
     def clear_all_transactions(self):
         """Clear all transactions from the database.
-        
+
         This is primarily useful for testing.
         """
         with sqlmodel.Session(self.engine) as session:

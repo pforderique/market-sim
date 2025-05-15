@@ -108,7 +108,7 @@ class TestTransactionDB:
             assert result.price == 150.75
             assert result.buyer == "user1"
             assert result.seller == "user2"
-    
+
     def test_insert_transactions(self, test_db):
         """Test inserting multiple transactions at once."""
         txs = [
@@ -129,9 +129,9 @@ class TestTransactionDB:
                 timestamp=datetime.datetime(2025, 5, 11, 9, 15, 0),
             )
         ]
-        
+
         test_db.insert_transactions(txs)
-        
+
         # Check they were inserted
         with sqlmodel.Session(test_db.engine) as session:
             results = session.exec(
@@ -139,11 +139,11 @@ class TestTransactionDB:
                     models.Transaction.security_id == "TSLA"
                 )
             ).all()
-            
+
             assert len(results) == 2
             assert results[0].price == 250.50
             assert results[1].price == 251.00
-    
+
     def test_most_recent_transaction(self, populated_db):
         """Test retrieving the most recent transaction for a security."""
         aapl_tx = populated_db.most_recent_transaction(models.SecurityID.AAPL)
@@ -151,17 +151,17 @@ class TestTransactionDB:
         assert aapl_tx.security_id == models.SecurityID.AAPL
         assert aapl_tx.timestamp == datetime.datetime(2025, 5, 1, 10, 15, 0)
         assert aapl_tx.price == 180.75
-        
+
         msft_tx = populated_db.most_recent_transaction(models.SecurityID.MSFT)
         assert msft_tx is not None
         assert msft_tx.security_id == models.SecurityID.MSFT
         assert msft_tx.timestamp == datetime.datetime(2025, 5, 4, 21, 14, 22)
         assert msft_tx.price == 391.50
-        
+
         # Test with non-existent security
         none_tx = populated_db.most_recent_transaction("NONEXISTENT")
         assert none_tx is None
-    
+
     def test_historical_prices(self, populated_db):
         """Test historical price aggregation."""
         # Test by minute
@@ -173,21 +173,24 @@ class TestTransactionDB:
             assert isinstance(result["period"], str)
             assert isinstance(result["avg_price"], float)
             assert isinstance(result["total_volume"], float)
-        
+
         # Test by hour
-        hr_results = populated_db.historical_prices(models.SecurityID.AAPL, "hr")
+        hr_results = populated_db.historical_prices(
+            models.SecurityID.AAPL, "hr")
         assert len(hr_results) > 0
-        
+
         # Test by day
-        day_results = populated_db.historical_prices(models.SecurityID.MSFT, "day")
+        day_results = populated_db.historical_prices(
+            models.SecurityID.MSFT, "day")
         assert len(day_results) == 1
         assert day_results[0]["period"] == "2025-05-04"
-        
+
         # Test by month
-        month_results = populated_db.historical_prices(models.SecurityID.AAPL, "month")
+        month_results = populated_db.historical_prices(
+            models.SecurityID.AAPL, "month")
         assert len(month_results) == 1
         assert month_results[0]["period"] == "2025-05"
-        
+
         # Test invalid step
         with pytest.raises(ValueError):
             populated_db.historical_prices(models.SecurityID.AAPL, "invalid")
@@ -196,13 +199,15 @@ class TestTransactionDB:
         """Test clearing all transactions."""
         # Verify data exists before clearing
         with sqlmodel.Session(populated_db.engine) as session:
-            count_before = session.exec(sqlmodel.select(sqlmodel.func.count()).select_from(models.Transaction)).one()
+            count_before = session.exec(sqlmodel.select(
+                sqlmodel.func.count()).select_from(models.Transaction)).one()
             assert count_before > 0
-        
+
         # Clear transactions
         populated_db.clear_all_transactions()
-        
+
         # Verify data is gone
         with sqlmodel.Session(populated_db.engine) as session:
-            count_after = session.exec(sqlmodel.select(sqlmodel.func.count()).select_from(models.Transaction)).one()
+            count_after = session.exec(sqlmodel.select(
+                sqlmodel.func.count()).select_from(models.Transaction)).one()
             assert count_after == 0

@@ -18,7 +18,8 @@ class SecurityID(str, enum.Enum):
 
 class Transaction(sqlmodel.SQLModel, table=True):
     """Model for a transaction."""
-    id: uuid.UUID = sqlmodel.Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = sqlmodel.Field(
+        default_factory=uuid.uuid4, primary_key=True)
     security_id: SecurityID
     price: float
     quantity: float

@@ -20,7 +20,8 @@ class MarketRecorder:
     def __init__(self):
         self.running = False
         self.transaction_db = db.TransactionDB()
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        self.sock = socket.socket(
+            socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         try:
@@ -32,7 +33,8 @@ class MarketRecorder:
         self.sock.bind(('', PORT))  # Bind to all interfaces on the given port
 
         # Join multicast group on all interfaces
-        mreq = struct.pack("=4sl", socket.inet_aton(MCAST_GRP), socket.INADDR_ANY)
+        mreq = struct.pack("=4sl", socket.inet_aton(
+            MCAST_GRP), socket.INADDR_ANY)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
     def listen(self):
