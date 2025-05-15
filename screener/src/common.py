@@ -31,16 +31,11 @@ STOCKS = [
     # "AMD", "TGT", "HOOD", "UBER", "COR", "IQV",
     # "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ",
 
-    # Pre-Selected
-    # "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN",
-    # "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH",
-    # "PANW",
-    # "ZTS", "MCK", "CAVA", "HOOD", "AMD", "LLY", "NVDA", "TSLA", "MU", "CRWD", 
-    # "BX", "AVGO", "AMAT", "ADI", "NLY", "DELL", "AXP", "UNH", "BLK", "SPGI",
-    # "VRTX", "V",
-    # "DAL", "ADI", "FSLR", "LLY", "AAPL", "TSLA", "META", "AMAT", "AVGO", "BX",
-    # "CAVA", "AMZN", "AMD", "RIVN", "UAL", "NVDA", "QCOM", "NKE", "UBER", "TSM",
-    # "MU", "HOOD", "DAL", "DELL", "TGT", "KO", "O",
-    "NVDA","HOOD", "FSLR", "UNH", "AXP", "DHR", 
-    "AVGO", "MU","DELL", "AMD", "UAL", "CRWD", "META", "UBER", "TSM", "AMAT", "BA", "AMZN", "CAVA", "IQV", "PFE"
+    # Pre-Selected (different per line)
+    # "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN", "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH", "PANW",
+    # "ZTS", "MCK", "CAVA", "HOOD", "AMD", "LLY", "NVDA", "TSLA", "MU", "CRWD", "BX", "AVGO", "AMAT", "ADI", "NLY", "DELL", "AXP", "UNH", "BLK", "SPGI", "VRTX", "V",
+    "DAL", "ADI", "FSLR", "LLY", "AAPL", "TSLA", "META", "AMAT", "AVGO", "BX", "CAVA", "AMZN", "AMD", "RIVN", "UAL", "NVDA", "QCOM", "NKE", "UBER", "TSM", "MU", "HOOD", "DAL", "DELL", "TGT", "KO", "O", "UNH", "EPD", "SPGI"
+    # "HOOD", "FSLR", "UNH", "AXP", "DHR", 
+    # "AVGO", "MU","DELL", "AMD", "UAL", "CRWD", "META", "UBER", "TSM", "AMAT", "BA", "AMZN", "CAVA", "IQV", "PFE"
+    # "IQV", "DHR", "PFE", "ZTS", "LLY", "O", "AMD", "GOOG", "DELL", "NVDA", "CMG", "TSLA", "BA", "WMT", "BRK.B", "MSFT",
 ]

@@ -1,5 +1,8 @@
+from heapq import heappush, heappop
 import datetime
 import os
+import http
+import time
 
 import requests
 import dotenv
@@ -12,13 +15,29 @@ _REQUEST_LIMIT_PER_SECOND = 5
 _REQUESTS_MADE_IN_LAST_SECOND = 0
 
 
+class KthCallTracker:
+    """Track the k-th call to the API."""
+
+    def __init__(self, k: int):
+        self.k = k
+        self.calls = []
+
+    def add_call(self, call_time: datetime.datetime):
+        heappush(self.calls, call_time)
+        if len(self.calls) > self.k:
+            heappop(self.calls)
+
+    def get_earliest_call(self) -> datetime.datetime:
+        return self.calls[0] if self.calls else datetime.datetime.min
+
+
 class MoringstarAPI:
     """RapidAPI client for Morningstar API."""
 
     CACHE_ENABLED = True
     _INSTANCE = None
     _CACHE: cache.Cache = None
-    _CALLS_MADE = 0
+    _CALL_TRACKER = KthCallTracker(_REQUEST_LIMIT_PER_SECOND)
 
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -40,6 +59,38 @@ class MoringstarAPI:
         cls._CACHE = cache.Cache.load()
         return cls._INSTANCE
 
+    def get_request(
+        self, route: str, params: dict = None, retry: int = 3
+    ) -> dict:
+        """Make a GET request to the Morningstar API.
+
+        Args:
+            route (str): The API endpoint.
+            params (dict): Query parameters for the request.
+
+        Returns:
+            dict: The JSON response from the API.
+        """
+        for _ in range(retry):
+            # Check if we need to wait for the next call
+            buffer_s = 0.5
+            wait_time = datetime.datetime.now() - MoringstarAPI._CALL_TRACKER.get_earliest_call() + datetime.timedelta(seconds=buffer_s)
+            if wait_time.total_seconds() < 1:
+                print(f"Waiting for {1 - wait_time.total_seconds():.2f} seconds to avoid rate limit.")
+                time.sleep(1 - wait_time.total_seconds())
+                MoringstarAPI._CALL_TRACKER.add_call(datetime.datetime.now())
+
+            response = self.session.get(f"{BASE_URL}{route}", params=params)
+            MoringstarAPI._CALL_TRACKER.add_call(datetime.datetime.now())
+            print(f"Response: {response}")
+            if response.status_code != http.HTTPStatus.OK:
+                raise requests.RequestException(f"Error: {response.json()}")
+            return response.json()
+
+        raise requests.RequestException(
+            "Could not make request after retries (likely due to rate limit)."
+        )
+
     def get_stock_data(self, ticker, force_update=False) -> dict | None:
         """Fetch stock data for a given ticker symbol.
 
@@ -55,10 +106,7 @@ class MoringstarAPI:
         route = "/market/v3/auto-complete"
         ticker_info = MoringstarAPI._CACHE.get(route, ticker)
         if force_update or not ticker_info:
-            ticker_info = self.session.get(
-                f"{BASE_URL}{route}", params={"q": ticker}
-            ).json()
-            MoringstarAPI._CALLS_MADE += 1
+            ticker_info = self.get_request(route, {"q": ticker})
             if not ticker_info:
                 MoringstarAPI._CACHE.set({}, route, ticker)
                 return None
@@ -71,37 +119,30 @@ class MoringstarAPI:
         route = "/stock/v2/get-price-fair-value"
         fair_value_data = MoringstarAPI._CACHE.get(route, performance_id)
         if force_update or fair_value_data is None:
-            fair_value_data = self.session.get(
-                f"{BASE_URL}{route}",
-                params={"performanceId": performance_id},
-            ).json()["chart"]["chartDatums"]["recent"]
+            fair_value_data = self.get_request(
+                route, {"performanceId": performance_id},
+            )["chart"]["chartDatums"]["recent"]
             fair_value_data.update({"LAST_CACHED": datetime.datetime.now()})
             MoringstarAPI._CACHE.set(fair_value_data, route, performance_id)
-            MoringstarAPI._CALLS_MADE += 1
 
         # Fetch latest price data
         route = "/stock/v2/get-mini-chart-realtime-data"
         price_data = MoringstarAPI._CACHE.get(route, performance_id)
         if force_update or price_data is None:
-            price_data = self.session.get(
-                f"{BASE_URL}{route}",
-                params={"performanceId": performance_id},
-            ).json()
+            price_data = self.get_request(
+                route, {"performanceId": performance_id},
+            )
             price_data.update({"LAST_CACHED": datetime.datetime.now()})
             MoringstarAPI._CACHE.set(price_data, route, performance_id)
-            MoringstarAPI._CALLS_MADE += 1
 
         # Fetch star rating data
         route = "/stock/v2/get-security-info"
         ratings = MoringstarAPI._CACHE.get(route, performance_id)
         if force_update or ratings is None:
-            ratings = self.session.get(
-                f"{BASE_URL}{route}",
-                params={"performanceId": performance_id},
-            ).json()
+            ratings = self.get_request(
+                route, {"performanceId": performance_id})
             ratings.update({"LAST_CACHED": datetime.datetime.now()})
             MoringstarAPI._CACHE.set(ratings, route, performance_id)
-            MoringstarAPI._CALLS_MADE += 1
 
         return {
             "name": ticker_info["Name"],
@@ -112,7 +153,8 @@ class MoringstarAPI:
             "dayChangePer": price_data["dayChangePer"],
             "latestFairValue": fair_value_data["latestFairValue"],
             "discount": (
-                float(price_data["lastPrice"]) / float(fair_value_data["latestFairValue"])
+                float(price_data["lastPrice"]) /
+                float(fair_value_data["latestFairValue"])
             ) if fair_value_data["latestFairValue"] and price_data["lastPrice"] else None,
             "uncertainty": fair_value_data["uncertainty"],
             "fairValueDate": fair_value_data["fairValueDate"],
