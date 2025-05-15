@@ -18,7 +18,7 @@ def sample_transactions():
     return [
         models.Transaction(
             id=uuid.UUID("00000000-0000-0000-0000-000000000001"),
-            security_id="AAPL",
+            security_id=models.SecurityID.AAPL,
             price=180.50,
             quantity=10.0,
             buyer="alice",
@@ -27,7 +27,7 @@ def sample_transactions():
         ),
         models.Transaction(
             id=uuid.UUID("00000000-0000-0000-0000-000000000002"),
-            security_id="AAPL",
+            security_id=models.SecurityID.AAPL,
             price=181.25,
             quantity=5.0,
             buyer="charlie",
@@ -36,7 +36,7 @@ def sample_transactions():
         ),
         models.Transaction(
             id=uuid.UUID("00000000-0000-0000-0000-000000000003"),
-            security_id="AAPL",
+            security_id=models.SecurityID.AAPL,
             price=180.75,
             quantity=15.0,
             buyer="bob",
@@ -45,7 +45,7 @@ def sample_transactions():
         ),
         models.Transaction(
             id=uuid.UUID("00000000-0000-0000-0000-000000000004"),
-            security_id="MSFT",
+            security_id=models.SecurityID.MSFT,
             price=390.05,
             quantity=2.0,
             buyer="fab",
@@ -54,7 +54,7 @@ def sample_transactions():
         ),
         models.Transaction(
             id=uuid.UUID("00000000-0000-0000-0000-000000000005"),
-            security_id="MSFT",
+            security_id=models.SecurityID.MSFT,
             price=391.50,
             quantity=3.0,
             buyer="piero",
@@ -67,25 +67,15 @@ def sample_transactions():
 @pytest.fixture
 def test_db():
     """Create an in-memory SQLite database for testing."""
-    # Use in-memory database for tests
     engine = sqlmodel.create_engine("sqlite:///:memory:", echo=False)
-
-    # Create DB instance
-    db = TransactionDB(engine=engine)
-
-    # Return the DB instance
-    return db
+    return TransactionDB(engine=engine)
 
 
 @pytest.fixture
 def populated_db(test_db, sample_transactions):
     """Create a database with sample transactions."""
-    # Clear any existing data
     test_db.clear_all_transactions()
-    
-    # Insert sample transactions
     test_db.insert_transactions(sample_transactions)
-    
     return test_db
 
 
@@ -102,9 +92,9 @@ class TestTransactionDB:
             seller="user2",
             timestamp=datetime.datetime(2025, 5, 10, 12, 0, 0),
         )
-        
+
         test_db.insert_transaction(tx)
-        
+
         # Check it was inserted
         with sqlmodel.Session(test_db.engine) as session:
             result = session.exec(
@@ -112,7 +102,7 @@ class TestTransactionDB:
                     models.Transaction.security_id == "GOOG"
                 )
             ).first()
-            
+
             assert result is not None
             assert result.security_id == "GOOG"
             assert result.price == 150.75
@@ -156,17 +146,15 @@ class TestTransactionDB:
     
     def test_most_recent_transaction(self, populated_db):
         """Test retrieving the most recent transaction for a security."""
-        # Test with AAPL
-        aapl_tx = populated_db.most_recent_transaction("AAPL")
+        aapl_tx = populated_db.most_recent_transaction(models.SecurityID.AAPL)
         assert aapl_tx is not None
-        assert aapl_tx.security_id == "AAPL"
+        assert aapl_tx.security_id == models.SecurityID.AAPL
         assert aapl_tx.timestamp == datetime.datetime(2025, 5, 1, 10, 15, 0)
         assert aapl_tx.price == 180.75
         
-        # Test with MSFT
-        msft_tx = populated_db.most_recent_transaction("MSFT")
+        msft_tx = populated_db.most_recent_transaction(models.SecurityID.MSFT)
         assert msft_tx is not None
-        assert msft_tx.security_id == "MSFT"
+        assert msft_tx.security_id == models.SecurityID.MSFT
         assert msft_tx.timestamp == datetime.datetime(2025, 5, 4, 21, 14, 22)
         assert msft_tx.price == 391.50
         
@@ -177,7 +165,9 @@ class TestTransactionDB:
     def test_historical_prices(self, populated_db):
         """Test historical price aggregation."""
         # Test by minute
-        min_results = populated_db.historical_prices("AAPL", "min")
+        min_results = populated_db.historical_prices(
+            models.SecurityID.AAPL, "min"
+        )
         assert len(min_results) > 0
         for result in min_results:
             assert isinstance(result["period"], str)
@@ -185,22 +175,22 @@ class TestTransactionDB:
             assert isinstance(result["total_volume"], float)
         
         # Test by hour
-        hr_results = populated_db.historical_prices("AAPL", "hr")
+        hr_results = populated_db.historical_prices(models.SecurityID.AAPL, "hr")
         assert len(hr_results) > 0
         
         # Test by day
-        day_results = populated_db.historical_prices("MSFT", "day")
+        day_results = populated_db.historical_prices(models.SecurityID.MSFT, "day")
         assert len(day_results) == 1
         assert day_results[0]["period"] == "2025-05-04"
         
         # Test by month
-        month_results = populated_db.historical_prices("AAPL", "month")
+        month_results = populated_db.historical_prices(models.SecurityID.AAPL, "month")
         assert len(month_results) == 1
         assert month_results[0]["period"] == "2025-05"
         
         # Test invalid step
         with pytest.raises(ValueError):
-            populated_db.historical_prices("AAPL", "invalid")
+            populated_db.historical_prices(models.SecurityID.AAPL, "invalid")
 
     def test_clear_all_transactions(self, populated_db):
         """Test clearing all transactions."""

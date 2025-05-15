@@ -1,15 +1,25 @@
 """Common models for the market recorder."""
 
 import datetime
+import enum
 import uuid
 
 import sqlmodel
 
 
+class SecurityID(str, enum.Enum):
+    """Enum for security IDs."""
+    AAPL = "AAPL"
+    MSFT = "MSFT"
+    GOOG = "GOOG"
+    AMZN = "AMZN"
+    TSLA = "TSLA"
+
+
 class Transaction(sqlmodel.SQLModel, table=True):
     """Model for a transaction."""
     id: uuid.UUID = sqlmodel.Field(default_factory=uuid.uuid4, primary_key=True)
-    security_id: str
+    security_id: SecurityID
     price: float
     quantity: float
     buyer: str
