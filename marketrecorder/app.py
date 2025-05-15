@@ -4,14 +4,15 @@ import signal
 import sys
 
 from src import recorder
-
+from src import routes
 
 # Flask app setup
 app = Flask(__name__)
+app.register_blueprint(routes.quotes_bp, url_prefix="/quotes")
 
 @app.route('/')
 def home():
-    return "Market Recorder is running!"
+    return "Market Recorder is running!\n"
 
 # Background thread for recorder
 transaction_recorder = recorder.MarketRecorder()

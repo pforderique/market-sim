@@ -3,7 +3,7 @@ from datetime import datetime
 import pydantic
 import pytest
 
-import models
+from src import models
 
 
 class TestTransaction:

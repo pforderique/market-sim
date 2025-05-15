@@ -7,7 +7,7 @@ import sqlmodel
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-import models
+from src import models
 
 
 DB_FILE = "data/transactions.db"

@@ -20,5 +20,8 @@ Please ignore dockerfiles for now.
 
 ## Development
 
-After code changes, run `$ pytest` to make sure no breaking changes were added.
+After code changes, run the following to make sure no breaking changes were added:
+```bash
+python -m pytest tests
+```
  
