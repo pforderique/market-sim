@@ -117,7 +117,7 @@ class TransactionDB:
             # Convert result to list of dicts
             return [
                 {
-                    "period": row[0],
+                    "timestamp": row[0],
                     "avg_price": row[1],
                     "min_price": row[2],
                     "max_price": row[3],
