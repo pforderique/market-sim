@@ -159,4 +159,5 @@ class MoringstarAPI:
             ) if fair_value_data["latestFairValue"] and price_data["lastPrice"] else None,
             "uncertainty": fair_value_data["uncertainty"],
             "fairValueDate": fair_value_data["fairValueDate"],
+            "lastCachedDate": ratings["LAST_CACHED"],
         }

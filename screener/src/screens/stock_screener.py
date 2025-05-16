@@ -1,10 +1,14 @@
+import datetime
+
 import npyscreen
+
 from src import common
 from src import morningstar as ms
 
 
 _NOT_AVAILABLE = "N/A"
-
+_UNCERTAINTIES_ORDER = ["Very Low", "Low", "Medium", "High", "Very High"]
+_DATE_FORMAT = "%m/%d/%y"
 
 class StockScreener(npyscreen.FormBaseNew):
     COLUMN_NAMES = [
@@ -17,6 +21,8 @@ class StockScreener(npyscreen.FormBaseNew):
         "Rating",
         "Uncertainty",
         "Action",
+        "Rating Date",
+        "Refresh Date",
     ]
     INSTRUCTION_COLOR = "STANDOUT"
     HEADER_COLOR   = "CONTROL"
@@ -27,7 +33,7 @@ class StockScreener(npyscreen.FormBaseNew):
         self.add(npyscreen.TitleText, name="Stock Screener", editable=False)
         self.add(
             npyscreen.FixedText, 
-            value=f"Sort by [1-{len(self.COLUMN_NAMES)}]",
+            value=f"Sort by [0-{len(self.COLUMN_NAMES[:9])}]",
             editable=False,
             rely=4,
             relx=3,
@@ -47,7 +53,7 @@ class StockScreener(npyscreen.FormBaseNew):
         # Header Text
         self.sort_column = None
         self.sort_reverse = False
-        self.header_names = [f"[{idx+1}]{col}" for idx, col in enumerate(self.COLUMN_NAMES)]
+        self.header_names = [f"[{idx}]{col}" if idx < 10 else col for idx, col in enumerate(self.COLUMN_NAMES)]
         header_lengths = [len(c) for c in self.header_names]
         max_item_lengths = [max(len(str(row[idx])) for row in self.stock_rows) for idx in range(len(self.header_names))]
         # Add padding, accounting for ▲/▼ chars and spacing
@@ -90,7 +96,7 @@ class StockScreener(npyscreen.FormBaseNew):
         )
 
     def handle_input(self, key):
-        sort_keys = {ord(str(i)): i - 1 for i in range(1, len(self.header_names) + 1)}
+        sort_keys = {ord(str(i)): i for i in range(len(self.header_names[:10]))}
         if key in sort_keys:
             col_idx = sort_keys[key]
             self._sort_by_column(col_idx)
@@ -114,9 +120,13 @@ class StockScreener(npyscreen.FormBaseNew):
             except ValueError:
                 pass
 
-            uncertainties_order = ["Very Low", "Low", "Medium", "High", "Very High"]
-            if item in uncertainties_order:
-                return uncertainties_order.index(item)
+            try:
+                return datetime.datetime.strptime(item, _DATE_FORMAT)
+            except ValueError:
+                pass
+
+            if item in _UNCERTAINTIES_ORDER:
+                return _UNCERTAINTIES_ORDER.index(item)
             return item
 
         sorted_data = sorted(
@@ -164,13 +174,16 @@ class StockScreener(npyscreen.FormBaseNew):
             format_decimal = lambda x: f"{float(x):.2f}" if x else "N/A"
             format_rating = lambda x: "★" * int(x) if x else "N/A"
             format_uncertainty = lambda x: x.strip() if x else "N/A"
+            format_time = lambda x: datetime.datetime.fromisoformat(x).strftime(_DATE_FORMAT) if x else "N/A"
             def action(s):
                 if s["discount"] is None:
                     return "N/A"
                 discount = float(s["discount"])
-                if discount <= 0.8:
+                uncertainty = s["uncertainty"]
+                discount_factor = 0.06*(1+_UNCERTAINTIES_ORDER.index(uncertainty))
+                if discount <= 1-discount_factor:
                     return "BUY"
-                elif discount >= 1.2:
+                elif discount >= 1+discount_factor:
                     return "SELL"
                 return "HOLD"
 
@@ -184,17 +197,11 @@ class StockScreener(npyscreen.FormBaseNew):
                 format_rating(stock_data["starRating"]),
                 format_uncertainty(stock_data["uncertainty"]),
                 action(stock_data),
+                format_time(stock_data["fairValueDate"]),
+                format_time(stock_data["lastCachedDate"]),
             ]
 
         return [format_row(data) for data in stock_data_rows]
-        # return [
-        #     ["MSFT", "$210.00", "★★★★", "+5%", "HOLD"],
-        #     ["AAPL", "$165.00", "★★★★★", "+10%", "BUY"],
-        #     ["GOOG", "$260.00", "★★★", "+2%", "SELL"],
-        #     ["AMZN", "$310.00", "★★", "-3%", "BUY"],
-        #     ["TSLA", "$360.00", "★", "-5%", "SELL"],
-        #     ["NVDA", "$410.00", "★★★★★", "+10%", "BUY"],
-        # ]
 
     def _format_row_data(self, data) -> list[str]:
         return [
