@@ -84,6 +84,7 @@ class MoringstarAPI:
             MoringstarAPI._CALL_TRACKER.add_call(datetime.datetime.now())
             print(f"Response: {response}")
             if response.status_code != http.HTTPStatus.OK:
+                print(f"{response.status_code} Error: {response.text}")
                 raise requests.RequestException(f"Error: {response.json()}")
             return response.json()
 

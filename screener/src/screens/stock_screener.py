@@ -108,8 +108,11 @@ class StockScreener(npyscreen.FormBaseNew):
             for token in ("$", "%", "."):
                 item = item.replace(token, "")
             item = item.strip()
-            if item.isnumeric():
+            try:
+                # "+1.2".isnumeric() is False, but float("+1.2") is valid
                 return float(item)
+            except ValueError:
+                pass
 
             uncertainties_order = ["Very Low", "Low", "Medium", "High", "Very High"]
             if item in uncertainties_order:

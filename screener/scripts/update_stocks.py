@@ -5,9 +5,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 _NUM_THREADS = 4 if len(common.STOCKS) >= 20 else 2 if len(common.STOCKS) >= 10 else 1
+print(f"USING {_NUM_THREADS} THREADS")
 
 
-def fetch_stock_data(ms_api, stock):
+def fetch_stock_data(ms_api: ms.MoringstarAPI, stock: str):
     start_time = time.time()
     data = ms_api.get_stock_data(stock, force_update=True)
     elapsed_time = time.time() - start_time
