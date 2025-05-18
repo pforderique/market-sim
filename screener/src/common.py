@@ -38,5 +38,6 @@ STOCKS = [
     # "HOOD", "FSLR", "UNH", "AXP", "DHR", 
     # "AVGO", "MU","DELL", "AMD", "UAL", "CRWD", "META", "UBER", "TSM", "AMAT", "BA", "AMZN", "CAVA", "IQV", "PFE"
     # "IQV", "DHR", "PFE", "ZTS", "LLY", "O", "AMD", "GOOG", "DELL", "NVDA", "CMG", "TSLA", "BA", "WMT", "BRK.B", "MSFT",
-    "KO", "MCD", "RIVN", "ZTS", "COKE", "PFE", "V", "COST", "PANW", "BA", "EPD", "TGT", "BLK", "O", "SPGI", "BX", "META", "MU", "IQV", "HOOD", "FSLR", "UNH" 
+    # "KO", "MCD", "RIVN", "ZTS", "COKE", "PFE", "V", "COST", "PANW", "BA", "EPD", "TGT", "BLK", "O", "SPGI", "BX", "META", "MU", "IQV", "HOOD", "FSLR", "UNH" 
+    "AMAT", "LCID", "CAVA", "FSLR", "META", "AVGO", "ZTS", "TGT", "CRWD", "NKE", "WMT", "MU", "AMD", "DELL", "UBER", "LLY"
 ]
