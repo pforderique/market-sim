@@ -21,6 +21,7 @@ class StockChartScreen(npyscreen.FormBaseNew):
         curses.endwin()
         os.system("clear")
         chart_screen.show()
+        input("Press [Enter] to return...")
         self.parentApp.run()
 
     def on_back(self):

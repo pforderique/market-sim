@@ -1,4 +1,5 @@
 import npyscreen
+
 from src import common
 from src.common import SUPPORTED_SECURITIES
 

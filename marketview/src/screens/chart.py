@@ -1,10 +1,14 @@
-import plotext as plt
 import os
-import requests
 import shutil
+
+import plotext as plt
+import requests
 
 from src.common import MARKET_RECORDER_API, format_price
 from src import transaction
+
+
+_NA_PRICE = "[No Transactions Made Yet]"
 
 
 def clear_terminal():
@@ -15,7 +19,10 @@ class ChartScreen:
         self.symbol = symbol
 
         price_data = requests.get(f"{MARKET_RECORDER_API}/quotes/{self.symbol}").json()
-        self.market_price = price_data["price"]
+        if price_data:
+            self.market_price = price_data.get("price", _NA_PRICE)
+        else:
+            self.market_price = _NA_PRICE
 
     def show(self):
         self.refresh_chart()
@@ -33,18 +40,29 @@ class ChartScreen:
 
     def refresh_chart(self):
         clear_terminal()
+
         timestamp_labels, prices = self._get_plot_data()
         plt.clear_figure()
-        plt.title(f"{self.symbol} {format_price(self.market_price)}")
-        plt.plot(range(len(timestamp_labels)), prices)
+
+        if self.market_price == _NA_PRICE:
+            title = f"{self.symbol} {_NA_PRICE}"
+        elif not prices:
+            title = f"{self.symbol} {format_price(self.market_price)} [Chart not updated.]"
+        else:
+            title = f"{self.symbol} {format_price(self.market_price)}"
+            plt.plot(range(len(timestamp_labels)), prices)
+            plt.xticks(range(len(timestamp_labels)), timestamp_labels)
+            plt.yticks(prices, [format_price(p) for p in prices])
+
+        plt.title(title)
         plt.xlabel("Date")
-        plt.xticks(range(len(timestamp_labels)), timestamp_labels)
         plt.ylabel("Price")
-        plt.yticks(prices, [format_price(p) for p in prices])
+
         cols, rows = shutil.get_terminal_size()
-        plt.plotsize(cols + 2, rows - 4)
+        plt.plotsize(cols, rows + 10)
         plt.canvas_color("black")
         plt.axes_color("black")
         plt.ticks_color("white")
+        plt.grid(True, False)
+
         plt.show()
-        input("\nPress [Enter] to return...")
