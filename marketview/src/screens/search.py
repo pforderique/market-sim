@@ -39,6 +39,10 @@ class SearchScreen(npyscreen.FormBaseNew):
         if not self.result_list.values:
             self.ok_button.hidden = True
             self.ok_button.update(clear=False)
+        elif self.result_list.values and self.result_list.value:
+            # If there are results, show the OK button
+            self.ok_button.hidden = False
+            self.ok_button.update(clear=False)
 
     def on_ok(self):
         if self.result_list.value:

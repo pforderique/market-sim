@@ -1,7 +1,9 @@
-# src/recorder.py
+from collections import defaultdict
 import socket
 import threading
-from collections import defaultdict
+
+from src import transaction
+
 
 class TransactionListener:
     def __init__(self, multicast_group="239.255.42.99", port=9999):
@@ -9,6 +11,7 @@ class TransactionListener:
         self.port = port
         self.running = False
         self.latest_prices = defaultdict(float)
+        self.call_backs = []
 
     def _listen(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -20,13 +23,14 @@ class TransactionListener:
         while self.running:
             try:
                 data, _ = sock.recvfrom(4096)
-                txn = data.decode().strip().split("|")
-                if len(txn) >= 3:
-                    symbol = txn[0]
-                    price = float(txn[1])
-                    self.latest_prices[symbol] = price
-            except Exception:
+                txn = transaction.parse_transaction(data.decode())
+            except Exception as e:
+                print(f"Exception in TransactionListener: {e}")
                 continue
+            else:
+                # Notify all listeners
+                for cb in self.call_backs:
+                    cb(txn)
 
     def start_background_listener(self):
         self.running = True
@@ -34,3 +38,6 @@ class TransactionListener:
 
     def stop(self):
         self.running = False
+
+    def register_callback(self, callback):
+        self.call_backs.append(callback)
