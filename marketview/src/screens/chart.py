@@ -59,7 +59,7 @@ class ChartScreen:
         plt.ylabel("Price")
 
         cols, rows = shutil.get_terminal_size()
-        plt.plotsize(cols, rows + 10)
+        plt.plotsize(cols, rows)
         plt.canvas_color("black")
         plt.axes_color("black")
         plt.ticks_color("white")

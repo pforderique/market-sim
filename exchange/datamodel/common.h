@@ -86,7 +86,7 @@ namespace datamodel
         if (id == "TSLA")
             return TSLA;
         if (id == "O")
-            return "O";
+            return O;
         throw std::runtime_error("Invalid SecurityID string: " + id);
     }
 
