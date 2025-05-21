@@ -23,10 +23,11 @@ namespace datamodel
         GOOG,
         AMZN,
         TSLA,
+        O,
 
         // Special values for iteration and bounds checking.
         FIRST = AAPL,
-        LAST = TSLA,
+        LAST = O,
     };
 
     inline std::string to_string(Side side)
@@ -65,6 +66,8 @@ namespace datamodel
             return "AMZN";
         case TSLA:
             return "TSLA";
+        case O:
+            return "O";
         default:
             return "UNKNOWN";
         }
@@ -82,6 +85,8 @@ namespace datamodel
             return AMZN;
         if (id == "TSLA")
             return TSLA;
+        if (id == "O")
+            return "O";
         throw std::runtime_error("Invalid SecurityID string: " + id);
     }
 

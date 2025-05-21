@@ -11,6 +11,7 @@ class SecurityID(str, enum.Enum):
     GOOG = "GOOG"
     AMZN = "AMZN"
     TSLA = "TSLA"
+    O    = "O"
 
 
 class Transaction(pydantic.BaseModel):

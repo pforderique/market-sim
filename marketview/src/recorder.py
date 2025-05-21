@@ -41,3 +41,7 @@ class TransactionListener:
 
     def register_callback(self, callback):
         self.call_backs.append(callback)
+
+    def remove_callback(self, callback):
+        if callback in self.call_backs:
+            self.call_backs.remove(callback)

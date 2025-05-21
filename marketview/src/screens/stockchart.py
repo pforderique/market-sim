@@ -16,12 +16,14 @@ class StockChartScreen(npyscreen.FormBaseNew):
     def set_symbol(self, symbol):
         self.symbol = symbol
         chart_screen = chart.ChartScreen(self.symbol)
-        self.parentApp.txn_listener.register_callback(chart_screen.on_transaction)
+        cb = chart_screen.on_transaction
+        self.parentApp.txn_listener.register_callback(cb)
 
         curses.endwin()
         os.system("clear")
         chart_screen.show()
         input("Press [Enter] to return...")
+        self.parentApp.txn_listener.remove_callback(cb)
         self.parentApp.run()
 
     def on_back(self):

@@ -63,6 +63,6 @@ class ChartScreen:
         plt.canvas_color("black")
         plt.axes_color("black")
         plt.ticks_color("white")
-        plt.grid(True, False)
+        # plt.grid(True, False)
 
         plt.show()
