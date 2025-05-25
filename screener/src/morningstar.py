@@ -8,6 +8,7 @@ import requests
 import dotenv
 
 from src import cache
+import threading
 
 
 BASE_URL = "https://morning-star.p.rapidapi.com"
@@ -21,14 +22,17 @@ class KthCallTracker:
     def __init__(self, k: int):
         self.k = k
         self.calls = []
+        self._lock = threading.Lock()
 
     def add_call(self, call_time: datetime.datetime):
-        heappush(self.calls, call_time)
-        if len(self.calls) > self.k:
-            heappop(self.calls)
+        with self._lock:
+            heappush(self.calls, call_time)
+            if len(self.calls) > self.k:
+                heappop(self.calls)
 
     def get_earliest_call(self) -> datetime.datetime:
-        return self.calls[0] if self.calls else datetime.datetime.min
+        with self._lock:
+            return self.calls[0] if self.calls else datetime.datetime.min
 
 
 class MoringstarAPI:
@@ -78,10 +82,9 @@ class MoringstarAPI:
             if wait_time.total_seconds() < 1:
                 print(f"Waiting for {1 - wait_time.total_seconds():.2f} seconds to avoid rate limit.")
                 time.sleep(1 - wait_time.total_seconds())
-                MoringstarAPI._CALL_TRACKER.add_call(datetime.datetime.now())
 
-            response = self.session.get(f"{BASE_URL}{route}", params=params)
             MoringstarAPI._CALL_TRACKER.add_call(datetime.datetime.now())
+            response = self.session.get(f"{BASE_URL}{route}", params=params)
             print(f"Response: {response}")
             if response.status_code != http.HTTPStatus.OK:
                 print(f"{response.status_code} Error: {response.text}")

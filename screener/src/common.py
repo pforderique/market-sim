@@ -23,13 +23,14 @@ STOCKS = [
     # "QQQ", "ISCG",
 
     # All Stocks
-    "NVDA", "GOOG", "MSFT", "LLY", "UNH", "BLK", "AAPL", "COST", "META",
-    "TSLA", "GOOGL", "COKE", "O", "CMG", "BRK.B", "NFLX", "NOC", "LCID",
-    "SPGI", "MCK", "V", "TSCO", "CAVA", "EPD", "DELL", "PANW",
-    "UAL", "CRWD", "WM", "BA","HSY", "DAL", "BX",
-    "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
-    "AMD", "TGT", "HOOD", "UBER", "COR", "IQV",
-    "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ", "LCID", 
+    # "NVDA", "GOOG", "MSFT", "LLY", "UNH", "BLK", "AAPL", "COST", "META",
+    # "TSLA", "GOOGL", "COKE", "O", "CMG", "BRK.B", "NFLX", "NOC", "LCID",
+    # "SPGI", "MCK", "V", "TSCO", "CAVA", "EPD", "DELL", "PANW",
+    # "UAL", "CRWD", "WM", "BA","HSY", "DAL", "BX",
+    # "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
+    # "AMD", "TGT", "HOOD", "UBER", "COR", "IQV",
+    # "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ", "LCID",
+    "BKNG", "LNW", 
 
     # Pre-Selected (different per line)
     # "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN", "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH", "PANW",
@@ -42,4 +43,7 @@ STOCKS = [
     # "AMAT", "LCID", "CAVA", "FSLR", "META", "AVGO", "ZTS", "TGT", "CRWD", "NKE", "WMT", "MU", "AMD", "DELL", "UBER", "LLY"
     # "UNH", "HOOD", "UAL", "CRWD", "MCD", "TSM", "COKE", "AAPL", "AMD", "TSLA", "CAVA", "FSLR"
     # "RIVN", "FSLR", "PFE", "NKE", "BA", "UNH", "TSLA", "AKAM", "TSCO", "UAL", "NVDA", "CRWD", "AMZN", "AXP", "TSM", "MSFT"
+    # "PANW", "CAVA", "TGT", "UNH", "IQV", "DHR", "UBER", "TSCO", "COKE", "BX", "BA", "NLY", "MCD", "AVGO", "NVDA", "AMD", "HOOD",
+    # "FSLR", "ADI", "RIVN", "QCOM", "TSCO", "LLY", "NLY", "KO", "TSLA", "CRWD", "PANW", "GOOG",
+    # "AMAT", "TSM", "HOOD", "AAPL", "MU", "IQV", "CRWD", "FSLR"
 ]
