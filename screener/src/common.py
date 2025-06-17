@@ -47,4 +47,5 @@ STOCKS = [
     # "FSLR", "ADI", "RIVN", "QCOM", "TSCO", "LLY", "NLY", "KO", "TSLA", "CRWD", "PANW", "GOOG",
     # "AMAT", "TSM", "HOOD", "AAPL", "MU", "IQV", "CRWD", "FSLR"
     # "TGT", "IQV", "NKE", "LLY", "TSLA", "TSM", "GOOGL", "FSLR", "GOOG", "MU", "ADI", "QCOM", "DIS", "TSCO", "HOOD", "BA", "UBER", "MCD", "AVGO", "AMAT", "AAPL", 
+    "FSLR", "DHR", "MCD", "COKE", "LLY", "EPD", "UNH", "AMD", "UAL", "CMG", "HOOD", "MU", "DAL", "ADI", "AKAM", "DELL", "AMAT", "META", "AXP", "TSM", "RIVN", "KO", 
 ]
