@@ -30,7 +30,7 @@ STOCKS = [
     # "FSLR", "AMAT", "AMZN", "MCD", "WMT", "AVGO", "KO", "AXP", "ADI",
     # "AMD", "TGT", "HOOD", "UBER", "COR", "IQV",
     # "DIS", "MU", "RIVN", "QCOM", "NLY", "ZTS", "CRBP", "IONQ", "LCID",
-    "BKNG", "LNW", 
+    # "BKNG", "LNW", 
 
     # Pre-Selected (different per line)
     # "FSLR", "TSLA", "RIVN", "AAPL", "CMG", "TGT", "EPD", "HOOD", "AMZN", "MU", "AVGO", "DAL", "UAL", "AMD", "CRWD", "COKE", "UBER", "UNH", "PANW",
@@ -46,4 +46,5 @@ STOCKS = [
     # "PANW", "CAVA", "TGT", "UNH", "IQV", "DHR", "UBER", "TSCO", "COKE", "BX", "BA", "NLY", "MCD", "AVGO", "NVDA", "AMD", "HOOD",
     # "FSLR", "ADI", "RIVN", "QCOM", "TSCO", "LLY", "NLY", "KO", "TSLA", "CRWD", "PANW", "GOOG",
     # "AMAT", "TSM", "HOOD", "AAPL", "MU", "IQV", "CRWD", "FSLR"
+    # "TGT", "IQV", "NKE", "LLY", "TSLA", "TSM", "GOOGL", "FSLR", "GOOG", "MU", "ADI", "QCOM", "DIS", "TSCO", "HOOD", "BA", "UBER", "MCD", "AVGO", "AMAT", "AAPL", 
 ]

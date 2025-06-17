@@ -1,6 +1,7 @@
 from src import morningstar as ms
 from src import common
 import time
+import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
@@ -10,7 +11,11 @@ print(f"USING {_NUM_THREADS} THREADS")
 
 def fetch_stock_data(ms_api: ms.MoringstarAPI, stock: str):
     start_time = time.time()
-    data = ms_api.get_stock_data(stock, force_update=True)
+    try:
+        data = ms_api.get_stock_data(stock, force_update=True)
+    except requests.RequestException:
+        data = None
+        print(f"could not complete stock {stock}")
     elapsed_time = time.time() - start_time
     return stock, data, elapsed_time
 
