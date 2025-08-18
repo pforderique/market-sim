@@ -6,7 +6,13 @@ CC = g++
 #  -Wall turns on most, but not all, compiler warnings
 #  -I    include path
 #  -m64  64-bit architecture, needed when running in WSL
-CFLAGS  = -g -Wall -Wextra -std=c++17 -fopenmp -Idatamodel -m64 -pthread
+ARCH := $(shell uname -m)
+ARCH_FLAGS :=
+ifeq ($(ARCH),x86_64)
+  ARCH_FLAGS += -m64
+endif
+
+CFLAGS  = -g -Wall -Wextra -std=c++17 -fopenmp -Idatamodel -pthread $(ARCH_FLAGS)
 # -L    library path
 LDFLAGS = -lsqlite3
 
