@@ -1,4 +1,5 @@
 #include "order_db.h"
+#include <filesystem>
 #include <sqlite3.h>
 #include <iostream>
 
@@ -10,6 +11,11 @@ namespace storage
 
     bool OrderDB::init()
     {
+        auto dir = std::filesystem::path(db_path_).parent_path();
+        if (!dir.empty() && !std::filesystem::exists(dir)) {
+            std::filesystem::create_directories(dir);
+        }
+
         sqlite3 *db;
         if (sqlite3_open(db_path_.c_str(), &db) != SQLITE_OK)
         {
