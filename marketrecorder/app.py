@@ -7,7 +7,7 @@ from src import recorder
 from src import routes
 
 # Flask app setup
-app = Flask(__name__)
+app: Flask = Flask(__name__)
 app.register_blueprint(routes.quotes_bp, url_prefix="/quotes")
 
 @app.route('/')
@@ -32,4 +32,4 @@ signal.signal(signal.SIGTERM, shutdown_handler)
 
 if __name__ == '__main__':
     recorder_thread.start()
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
