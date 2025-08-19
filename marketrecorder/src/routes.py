@@ -71,7 +71,7 @@ def get_quote(symbol):
             "timestamp": transaction.timestamp,
         }
     else:
-        quote = None
+        quote = {}
 
     return flask.jsonify(quote), http.HTTPStatus.OK
 
