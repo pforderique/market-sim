@@ -1,13 +1,35 @@
-version: "3.9"
 services:
   exchange:
     build:
-      context: ./exchange
-    network_mode: "host"   # Needed for multicast to work
+      context: .
+      dockerfile: exchange/Dockerfile
+    container_name: market-sim-exchange
+    ports:
+      - "8888:8888"
+      - "9999:9999/udp"
+    volumes:
+      - ./exchange/data:/app/data
 
   marketrecorder:
     build:
-      context: ./marketrecorder
+      context: .
+      dockerfile: marketrecorder/Dockerfile
+    container_name: market-sim-recorder
     depends_on:
       - exchange
-    network_mode: "host"   # Also needs to join multicast group on host
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./marketrecorder/data:/app/data
+
+  marketview:
+    build:
+      context: .
+      dockerfile: marketview/Dockerfile
+    container_name: market-sim-viewer
+    depends_on:
+      - marketrecorder
+    environment:
+      - MARKET_RECORDER_API=http://marketrecorder:5000
+    stdin_open: true   # so npyscreen/interactive TUI works
+    tty: true

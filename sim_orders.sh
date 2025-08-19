@@ -3,7 +3,7 @@ set -euo pipefail
 
 EXCHANGE_HOST="localhost"
 EXCHANGE_PORT=8888
-DELAY=15  # seconds
+DELAY=1800  # seconds
 
 # Symbols
 SYMBOLS="AMZN GOOG MSFT O AAPL TSLA"

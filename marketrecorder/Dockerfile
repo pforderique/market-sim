@@ -1,11 +1,8 @@
-# marketrecorder/Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
-
-COPY requirements.txt .
+COPY marketrecorder/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-
-CMD ["python", "recorder.py"]
+COPY marketrecorder/ .
+CMD ["python", "app.py"]
