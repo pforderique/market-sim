@@ -8,19 +8,23 @@ Open source implementation of a market exchange (exchange/), transaction consume
 
 * The **marketview** application provides a simple terminal UI for viewing historical and realtime updates of these trades. It calls  **marketrecorder**'s API routes for historical prices and listens for the **exchange**'s UDP multicasts. In real life, this would be owned by a trading company or an individual investor.
 
+## 0) Software Dependencies
+Just need to make sure you have [docker](https://docs.docker.com/engine/install/) installed and that the docker daemon is running (can do this by opening up Docker Desktop).
 
 ## 1) Start all Services
 
 The UI depends on the core infrastructure (marketrecorder and exchange services) to be running. You can either start them separately if you want to see the service logs as they log transactions, or you can start the core infrastructure in the background.
 
-### Run in background
+### A) Run in background
 
 ```bash
 make view
 ```
 Press 's' to bring up the search page and search for "GOOG". You'll notice it shows `[No Transactions Made Yet]`.
 
-### Run with logs
+OR 
+
+### B) Run with logs
 ```
 make up
 ```
@@ -53,4 +57,6 @@ make orders
 
 > Note, the UI notes new orders on every transaction, but will only update the chart once per minute. This is a known bug, not a feature ;)
 
-**Congrats!** You just ran an end-to-end example of how our markets works.
+**Congrats!** You just ran an end-to-end example of how our markets work.
+
+To turn down all services, simply run `make down`.
